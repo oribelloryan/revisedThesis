@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>THE INTERCEPTOR - LOGIN</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+   <link href="dist/css/signin.css" rel="stylesheet">
+   <style>
+   #examplecontent {
+    height: 100vh;
+    width: 100vw;
+    background-color: #000;
+  }.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .8) url('images/load.gif') 50% 50% no-repeat;
+    }
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+    body.loading {
+    /*background-color: red;*/
+    overflow: hidden;
+  }
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+    body.loading .modal {
+    display: block;
+  }
+  </style>
+  </head>
+
+  <body>
+    <div class="modal"></div>
+    <div class="container">
+      <center><img src="images/logo_interceptor.png" style="height:310px;width:220px;margin-top:-50px;"></center>
+      <form class="form-signin" type="POST">
+        <center><h1 style="font-size:28px;color:#ffffff;">OPERATION LOGIN</h1>
+        <p style="color:#ffffff;font-size:20px;">Operation Name :</p></center>
+        <input type="text" id="opname" name="name" class="form-control" placeholder="Enter Operation Name...">
+        <center><p style="color:#ffffff;font-size:20px;">Operation Password :</p></center>
+        <input type="password" id="oppass" name="pass" class="form-control" placeholder="Enter Operation Password...">
+         <center><p style="color:#ffffff;font-size:20px;">Checkpoint Name :</p></center>
+        <input type="text" id="oppcheckpoint" name="check" class="form-control" placeholder="Enter Checkpoint Id...">  
+        <br>     
+        <button class="btn btn-lg btn-primary btn-block" onClick="login();" type="button" id="submit">Sign in</button>
+        <button class="btn btn-lg btn-primary btn-block" type="reset">Reset</button>
+      </form>
+
+    </div> <!-- /container -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    // $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+    $(document).ajaxStart(function () {
+    $("body").addClass("loading");
+    });
+    $(document).ajaxStop(function () {
+    $("body").removeClass("loading");
+    });
+
+    function login(){
+      var operation = document.getElementById('opname');
+      var password = document.getElementById('oppass');
+      var checkpoint = document.getElementById('oppcheckpoint');
+      if(operation.value == "") {
+      alert("Please provide the OPERATION'S NAME")
+      operation.focus();
+      return false;
+      }
+
+      if(password.value == "") {
+      alert('Please provide the password for the operation')
+      password.focus();
+      return false;
+      }
+
+      if(checkpoint.value == "") {
+      alert('Please provide the password for the operation')
+      checkpoint.focus();
+      return false;
+      }
+      // "https://interceptorpnp.000webhostapp.com/
+      $.ajax({
+        url : "/mobile_logging.php",
+        type : "POST",
+        dataType: "JSON",
+        data : {
+          name : operation.value,
+          pass : password.value,
+          check : checkpoint.value
+      },
+        success : function(msg){
+          var info;
+          if(msg == "NoRecord"){
+            alert("Invalid Credentials");
+          }else{
+            info = 'Operation Id: '+ msg.operation_id +
+            '\nOperation Name: '+ msg.operation_name +
+            '\nDate Planned: '+ msg.date_plan;
+            var x = confirm(info);
+            if(x === true){
+              alert("You will be directed to the operation details");
+              window.location.href = "mobile_index.html?id="+msg.operation_id+"&?name="+checkpoint.value+"#op-map";
+            }else{
+              return false;
+            }
+          }
+        }
+      });
+    }
+
+    </script>
+  </body>
+</html>
