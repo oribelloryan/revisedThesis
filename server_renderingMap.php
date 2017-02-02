@@ -236,9 +236,22 @@
                 name: counter.name
               });
               policeMarkers.push(policeMarker);
+              console.log(counter.breached);
               if(counter.breached){
                 breachedSize = 250;
                 breachedPoint = {};
+
+                var cityCircle = new google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: map,
+                center: point,
+                radius: radiusSized * 1
+                });
+
               }else{
                 console.log(counter.breached);
               }
@@ -273,10 +286,7 @@
 
       function doNothing() {}
 
-       setInterval(function(){
-        // alert('300');
-      }, 3000);
-
+  
        function perimeter(loc, size, map){
         circle = new google.maps.Polygon({
         map: map,
