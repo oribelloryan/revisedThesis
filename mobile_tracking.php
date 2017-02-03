@@ -20,28 +20,28 @@ header('Access-Control-Allow-Origin: *');
 	$loc->bindValue(':id', $id);
 	$loc->execute();
 
-	if($loc->rowCount() === 1){
-	$location = $conn->prepare("UPDATE on_going_operation SET lat = :la, lng = :ln, time_updated = :ti, counter = :co WHERE checkpoint_id = :che");
-	$location->bindValue(':la', $lat);
-	$location->bindValue(':ln', $lng);
-	$location->bindValue(':che', $id);
-	$location->bindValue(':ti', $date );
-	$location->bindValue(':co', $counter);
-	$location->execute();
-	if($stmt->rowCount() == 1){
+	if($stmt->rowCount() === 1){
+		if($loc->rowCount() == 1){
+		$location = $conn->prepare("UPDATE on_going_operation SET lat = :la, lng = :ln, time_updated = :ti, counter = :co WHERE checkpoint_id = :che");
+		$location->bindValue(':la', $lat);
+		$location->bindValue(':ln', $lng);
+		$location->bindValue(':che', $id);
+		$location->bindValue(':ti', $date );
+		$location->bindValue(':co', $counter);
+		$location->execute();	
+	
 		
 		echo "Updated";
 	
 	}else{
-	$breached = 'no';
-	$insert = $conn->prepare("INSERT INTO on_going_operation(checkpoint_id, breached) VALUES (:i, :br)");
-	$insert->bindValue(':i', $id);
-	$insert->bindValue(':br', $breached);
-	$insert->execute();
+		$breached = 'no';
+		$insert = $conn->prepare("INSERT INTO on_going_operation(checkpoint_id, breached) VALUES (:i, :br)");
+		$insert->bindValue(':i', $id);
+		$insert->bindValue(':br', $breached);
+		$insert->execute();
 	}
 	}else{
 		echo "You're not part of the team";
 	}
 	
-	}
 ?>

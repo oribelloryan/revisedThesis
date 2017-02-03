@@ -39,12 +39,34 @@
   #checkpoints{
     visibility: hidden;
   }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .8) url('images/load.gif') 50% 50% no-repeat;
+    }
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+    body.loading {
+    /*background-color: red;*/
+    overflow: hidden;
+  }
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+    body.loading .modal {
+    display: block;
+  }
 
 </style>
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body>
+<div class="modal"></div>
 <!-- Main Page -->
 <!-- Operation Details Page -->
 <div data-role="page" id="op-details">
@@ -321,8 +343,30 @@
                 operation: oppId
               },
               success: function(data){
-                console.log('data:'+data);
+                var other = JSON.parse(data);
+                for (var i = 0; i < other.otherPolice.length; i++) {
+                  var counter = other.otherPolice[i];
+                  var point = {
+                    lat: counter.lat * 1,
+                    lng: counter.lng * 1
+                  };
+                  // console.log(counter);
+               var image = {
+                  url: 'images/pnp.png',
+           // size: new google.maps.Size(71, 71),
+                  anchor: new google.maps.Point(10, 10),
+                  scaledSize: new google.maps.Size(40, 40)
+               };
+
+               var otherPoliceMarker = new google.maps.Marker({
+                position: point,
+                icon: image,
+                map: map,
+                name: counter.name
+              });
+               console.log(otherPoliceMarker);
               }
+            }
         });
       }, 2000);
 
@@ -361,7 +405,13 @@
                },
                success: function(msg){
                alert(msg);
-               }
+               },
+               beforeSend: function(){
+                        $("body").addClass("loading");
+                      },
+                      complete: function(){
+                        $("body").removeClass("loading");
+                      }
             });
            }else{
                alert("You cancelled the event");

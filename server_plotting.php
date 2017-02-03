@@ -37,41 +37,63 @@
         height: 570px;
         visibility:hidden;
       }
-      #saveBtn, #address, #checkpointSpan{
+      #saveBtn, #address, #checkpointSpan, #changeTargetBtn{
         visibility:hidden;
-      }
+      }.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .8) url('images/load.gif') 50% 50% no-repeat;
+    }
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+    body.loading {
+    /*background-color: red;*/
+    overflow: hidden;
+  }
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+    body.loading .modal {
+    display: block;
+  }
     </style>
 
    </head>
 
     <body>
-
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/header.png" style="width:400px;"></center>
     </div>
-    
-    <div class="container">
+    <div class="modal"></div>
+
+    <div class="container" style="margin-top:20px;">
    
     <div id="formradius">
-    <p id="mensahe">PLEASE SET RADIUS FIRST</p>
-    <input type="number" id="radiussize">
-    <button onClick="changeradius()"><span id="set">SET RADIUS SIZE(m)</span></button>
-    <button onClick="deleteMarker()">CHANGE TARGET</button>
-    <button onClick="showMarker()">SHOWMARKER</button>
-    <button id="saveBtn" onClick="saving()">SAVE MAP</button>
+    <!--<p id="mensahe">PLEASE SET RADIUS FIRST</p>-->
+    <label>PLEASE SET RADIUS FIRST</label>
+    <input type="number" class="form-control" id="radiussize" style="width:10%;">
+    <button onClick="changeradius()" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:100px;"><span id="set">SET RADIUS SIZE(m)</span></button>
+    <button onClick="changeTarget()" id="changeTargetBtn" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">CHANGE TARGET</button>
+    <button id="saveBtn" onClick="saving()" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">SAVE MAP</button>
     <br/>
-    <span id="address"><span>Target Address: </span> <span id="targetAddress">None</span></span>
+    <!--<span id = "address"><span>Target Address: </span> <span id= "targetAddress">None</span> </span>-->
     <br/>
-    <span id='checkpointSpan'>Number of checkpoints: <label id='checkpointsCounter'></label></span>
+    <p id = 'checkpointSpan' style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-top:-30px;">Number of checkpoints: </p><label id = 'checkpointsCounter' style="text-decoration:underline;"></label><br>
+    <p id='targetSpan' style="color:#bd593d;font-weight:bold;text-transform:uppercase;">Target Location: </p><label id = 'targetLabel' style="text-decoration:underline;"></label>
     <input type="hidden" id="targetHdn" />
     <input type="hidden" id="checkpointsHdn" />
     </div>
     <br/>
-    <div id="map" ></div>
+    <center><div id="map" ></div></center>
     </div><!-- /.container -->
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="js/boundary.js"></script>
     <script type="text/javascript">
-      "use strict"
+
     var radiusSize = 0;
     var markers = [];
     var locations = [];
@@ -113,6 +135,11 @@
          }
     }
 
+    function changeTarget(){
+      setMapOnAll(null);
+      circle.setMap(null);
+      circle = 0;
+    }
 
 
     function snapToRoad(data){
@@ -121,7 +148,13 @@
       console.log(dot);
       console.log(data);
      
-      $.get( "https://roads.googleapis.com/v1/nearestRoads?points="+dot+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI", function( msg ) {
+      $.ajax({ 
+        url : "https://roads.googleapis.com/v1/nearestRoads?points="+dot+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI",
+        type: "GET",
+        beforeSend: function(){
+            $("body").addClass("loading");
+        },
+        success: function( msg ) {
         latitude = msg.snappedPoints[0].location.latitude;
         longitude = msg.snappedPoints[0].location.longitude;
         var pos = {
@@ -147,7 +180,7 @@
         // var deleteWindow = new google.maps.InfoWindow();
         var content = $('<div class="marker-info-win">'+
           '<div class="marker-inner-win"><span class="info-content">'+
-          '</span><button name="save-marker" class="save-marker" title="Save Label">DELETE</button>'+
+          '</span><button name="save-marker" class="save-marker" onClick="deleteMarker(this)" title="Save Label">DELETE</button>'+
           '</div></div>');
        google.maps.event.addListener(targetMarker,'click', (function(marker, content, infowindow){ 
          
@@ -171,7 +204,11 @@
           targetMarker.setMap(map);
           markers.push(targetMarker);
           save.style.visibility = 'visible';
-    });
+         },
+         complete: function(){
+            $("body").removeClass("loading");
+         }
+        });
         // google.maps.event.addListener(marker, 'click', function() {
         //         infowindow.open(map,marker); // click on marker opens info window 
         // });
@@ -188,6 +225,10 @@
     function locationPass(e){
       var data = e.lat()+','+e.lng();
       return data;
+    }
+
+    function deleteMarker(e){
+      alert(e);
     }
 
     function addPerimeter(loc){
@@ -274,9 +315,15 @@
        $.ajax({
            type: "GET",
            url: " https://maps.googleapis.com/maps/api/geocode/json?latlng="+e+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI",
+           beforeSend: function(){
+            $("body").addClass("loading");
+            },
            success: function(msg){
              value = msg.results[0].formatted_address;
              callback(value);
+           },
+           complete: function(){
+            $("body").removeClass("loading");
            }
        });
     }
@@ -380,13 +427,11 @@
         
       
         boundaryLine.setMap(map);
+
         google.maps.event.addListener(map, 'click', function(event) {
         isOfCity =  google.maps.geometry.poly.containsLocation(event.latLng, boundary);
         if(perimeterOpen === false){
-          // alert(google.maps.geometry.poly.containsLocation(event.latLng, circle));
-          // circle.addListener('click', function(e){
-          //   alert(e.latLng);
-          // });
+          
           
               if(isOfCity){
                targetAddress(locationPass(event.latLng), function(back){
@@ -403,13 +448,19 @@
                     },
                     function(isConfirm){
                       if (isConfirm){
+                        document.getElementById('targetLabel').innerHTML = back;
                         checkpointSpanVisibility(true);
                         swal("Area Locked", "Targeted Place", "success");
                         addPerimeter(event.latLng);
                         perimeterOpen = setPerimeter();
+                        if(radiusSize <= 400){
                         map.setCenter(event.latLng);
-                        map.setZoom(18);
-
+                        map.setZoom(17);
+                        }else if(radiusSize > 400 && radiusSize < 500){
+                        map.setCenter(event.latLng);
+                        map.setZoom(16);
+                        }
+                        changeTargetBtn.style.visibility = "visible";
                       } else {
                         swal("Cancelled");
                       }
@@ -426,17 +477,18 @@
           //   snapToRoad(e.latLng);
           // });
           // console.log(event);
-         
-            var isOfPerimeter = google.maps.geometry.poly.containsLocation(event.latLng, circle);
+       
+          var isOfPerimeter = google.maps.geometry.poly.containsLocation(event.latLng, circle);
             if(isOfCity){
               if(isOfPerimeter){
-              snapToRoad(event.latLng);
+                  snapToRoad(event.latLng);
               }else{
                   swal('Out of Bounds', 'that is not within the perimeter', 'warning');
               }
             }else{
                   swal('Out of Bounds', 'That is not part of San Juan City', 'warning');
             }
+
          }
       });
     }
@@ -500,7 +552,13 @@
                      }else{
                        swal('Error in saving');
                      }
-                     }
+                     },
+                      beforeSend: function(){
+                        $("body").addClass("loading");
+                      },
+                      complete: function(){
+                        $("body").removeClass("loading");
+                      }
                    });
               } else {
                 swal("Cancelled");

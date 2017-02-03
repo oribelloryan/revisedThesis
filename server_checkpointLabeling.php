@@ -15,7 +15,7 @@
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
+    <link href="dist/css/starter-template.css" rel="stylesheet">
 
     </script>
   <style>
@@ -43,13 +43,13 @@
     <span id="target"></span>
     <span id="checkpoints" ></span>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/header.png"" style="width:400px;"></center>
     </div>
-
-    <div class="container">
-    <p><h4><center>Operation :<span id="operation_name"></span></center></h4></p>
-    <p>Date Executed: <span id="date_executed"></span>
-    <p>Number of officers: <span id="num_officers"></span>
+    <a href="index.php"><img src="images/breached_node.png" style="width:50px;" align="right"></a>
+    <div class="container" style="margin-top:50px;">    
+    <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
+    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed:</p> <span id="date_executed"></span>
+    <p id = 'checkpointSpan' style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoints:</p> <p id="num_officers" style="margin-bottom:20px;"></p>
     <div id="map" ></div>
     <div id="formradius">
     <input type="number" id="radiussize">

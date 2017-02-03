@@ -73,10 +73,10 @@ function dateDifference($date1, $date2){
     <!-- Custom styles for this template -->
     <link href="dist/css/starter-template.css" rel="stylesheet">
 
-    <link href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <link href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" >
   </head>
   <body>
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/header.png" style="width:400px;"></center>
     </div>
 
@@ -84,14 +84,15 @@ function dateDifference($date1, $date2){
     <br>
     <br>
     <div class="row">
-    <?php echo "<center><h4>".$today."</h4></center>"; ?>
+    <!--<?php echo "<center><h4 style='color:#317fba;'>".$today."</h4></center>"; ?>-->
+    <center><h4 style="color:#317fba;">Planned Operations</h4></center>
     <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="95%">
     <thead>
     <th>Id</th>
     <th>Operation</th>
     <th>Date Planned</th>
     <th>Date Executed</th>
-    <th>Execution</th>
+    <th>Execution day(s) to go</th>
     </thead>
     <tbody>
     <?php
@@ -105,7 +106,7 @@ function dateDifference($date1, $date2){
              echo "<td><p>" .dateformatting($result['date_plan'])."</p></td>";
              echo "<td><p>" .dateformatting($result['date_execute'])."</p></td>";
      $neg = abs($diff);
-            echo "<td><p> $neg day(s) to go</p></td>";
+            echo "<td><p> $neg</p></td>";
      echo "</tr></a>";
     }
     ?>
