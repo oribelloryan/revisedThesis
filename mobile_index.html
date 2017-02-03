@@ -145,7 +145,8 @@
     var oppId = getUrl("id=", "&");
     var checkpointName = getUrl("name=", "#");
     var target, radiusSize;
-
+    var map;
+    
     $.ajax({
     type: "POST",
     url: "mobile_map_renderingajax.php",
@@ -171,7 +172,7 @@
     var locationLat, locationLng;
 
     function initMap(){
-        var map = new google.maps.Map(document.getElementById('map'), {
+        map = new google.maps.Map(document.getElementById('map'), {
                 zoom: minZoomLevel,
                 center: centeroftheearth ,
                 mapTypeId: 'roadmap'
@@ -334,7 +335,7 @@
          intervalCounter++;
       }, 3000);
        
-      setInterval(function(){
+        setInterval(function(){
         $.ajax({
               type: "POST",
               url: "mobile_othersTracking.php",
