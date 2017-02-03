@@ -126,7 +126,7 @@
 
     $.ajax({
     type: "POST",
-    url: "https://interceptorpnp.000webhostapp.com/mobile_map_renderingajax.php",
+    url: "mobile_map_renderingajax.php",
     data: {
     id: oppId,
         },
@@ -205,7 +205,7 @@
         // https://interceptorpnp.000webhostapp.com/
          var searchUrl = 'mobile_target_marker.php?id=' + oppId;
 
-        downloadUrl('https://interceptorpnp.000webhostapp.com/mobile_target_marker.php/?id='+ oppId, function(data) {
+        downloadUrl('mobile_target_marker.php/?id='+ oppId, function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
 
@@ -249,7 +249,7 @@
           });
 
     // https://interceptorpnp.000webhostapp.com/
-     downloadUrl('https://interceptorpnp.000webhostapp.com/mobile_checkpoints_target.php/?id='+oppId, function(data) {
+     downloadUrl('mobile_checkpoints_target.php/?id='+oppId, function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
             Array.prototype.forEach.call(markers, function(markerElem) {
@@ -286,6 +286,9 @@
               });
             });
           });
+     // downloadUrl('mobile_othersTracking.php', function(data){
+     //  console.log(data);
+     // });
     }
 
        var intervalCounter = 0;
@@ -294,7 +297,7 @@
 
          $.ajax({
                type: "POST",
-               url: "https://interceptorpnp.000webhostapp.com/mobile_tracking.php",
+               url: "mobile_tracking.php",
                data: {
                   name: checkpointName,
                   lat: locationLat,
@@ -312,7 +315,7 @@
       setInterval(function(){
         $.ajax({
               type: "POST",
-              url: "https://interceptorpnp.000webhostapp.com/mobile_othersTracking.php",
+              url: "mobile_othersTracking.php",
               data: {
                 name: checkpointName,
                 operation: oppId

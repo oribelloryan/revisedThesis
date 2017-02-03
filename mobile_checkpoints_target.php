@@ -11,7 +11,7 @@ $node = $dom->createElement("markers");
 $parnode = $dom->appendChild($node);
 
 // Search the rows in the markers table
-$query = "SELECT * FROM checkpoints WHERE operation_id = $id";
+$query = "SELECT * FROM checkpoints AS c WHERE operation_id = $id";
 $result = $conn->query($query);
 
 header("Content-type: text/xml");
@@ -21,7 +21,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)){
   $node = $dom->createElement("marker");
   $newnode = $parnode->appendChild($node);
   $newnode->setAttribute("id", $row['id']);
-  $newnode->setAttribute("name", $row['operation_id']);
+  $newnode->setAttribute("name", $row['name']);
   $newnode->setAttribute("lat", $row['lat']);
   $newnode->setAttribute("lng", $row['lng']);
 }

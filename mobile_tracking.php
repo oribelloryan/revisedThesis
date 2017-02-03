@@ -31,10 +31,6 @@ header('Access-Control-Allow-Origin: *');
 	if($stmt->rowCount() == 1){
 		
 		echo "Updated";
-
-	}else{
-		echo "You're not part of the team";
-	}
 	
 	}else{
 	$breached = 'no';
@@ -42,7 +38,10 @@ header('Access-Control-Allow-Origin: *');
 	$insert->bindValue(':i', $id);
 	$insert->bindValue(':br', $breached);
 	$insert->execute();
-
+	}
+	}else{
+		echo "You're not part of the team";
+	}
 	
 	}
 ?>

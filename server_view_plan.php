@@ -71,7 +71,7 @@ function dateDifference($date1, $date2){
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
+    <link href="dist/css/starter-template.css" rel="stylesheet">
 
     <link href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
   </head>

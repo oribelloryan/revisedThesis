@@ -16,6 +16,8 @@
 
     <!-- Custom styles for this template -->
     <link href="dist/css/starter-template.css" rel="stylesheet">
+    <script src="dist/js/sweetalert-dev.js"></script>
+    <link rel="stylesheet" href="dist/css/sweetalert.css">
 
     </script>
   <style>
@@ -61,6 +63,7 @@
     var radiusSize = 0;
     var policeMarkers = [];
     var breachedSize = 0;
+    var breachedCounter = 1;
     // var breachedPoint = {
     //   lat: undefined, 
     //   lng: undefined,
@@ -121,8 +124,6 @@
 
     boundaryLine.setMap(map);
 
-    perimeter(breachedPoint, breachedSize ,map);
-
     // https://interceptorpnp.000webhostapp.com/
 
     downloadUrl('mobile_target_marker.php/?id='+getUrl(), function(data) {
@@ -174,21 +175,21 @@
      downloadUrl('mobile_checkpoints_target.php/?id='+getUrl(), function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
-              counter=0;
+             
             Array.prototype.forEach.call(markers, function(markerElem) {
-              var name = markerElem.getAttribute('operation_id');
+              var name = markerElem.getAttribute('name');
               var point = new google.maps.LatLng(
                   parseFloat(markerElem.getAttribute('lat')),
                   parseFloat(markerElem.getAttribute('lng')));
             
               var infowincontent = document.createElement('div');
               var strong = document.createElement('strong');
-              strong.textContent = counter;
+              strong.textContent = name;
               infowincontent.appendChild(strong);
               infowincontent.appendChild(document.createElement('br'));
-              counter++;
+             
               var text = document.createElement('text');
-              text.textContent = name
+              text.textContent = name;
               infowincontent.appendChild(text);
 
                 var image = {
@@ -197,6 +198,7 @@
                   anchor: new google.maps.Point(10, 10),
                   scaledSize: new google.maps.Size(30, 30)
                };
+
               var marker = new google.maps.Marker({
                 map: map,
                 icon: image,
@@ -211,10 +213,11 @@
           });
 
          },1000);
-
+     
      setInterval(function(){
     downloadUrl('server_tracking.php/?id='+getUrl(), function(data) {
            var dataPass = JSON.parse(data.response);
+          
           for (var i = 0; i < dataPass.polices.length; i++) {
           var counter = dataPass.polices[i];
            // console.log(counter.counter_name);
@@ -238,20 +241,23 @@
               policeMarkers.push(policeMarker);
               console.log(counter.breached);
               if(counter.breached){
-                breachedSize = 250;
-                breachedPoint = {};
-
-                var cityCircle = new google.maps.Circle({
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35,
-                map: map,
-                center: point,
-                radius: radiusSized * 1
+                alertSign(counter.name, function(){
+                  
+                   var cityCircle = new google.maps.Circle({
+                   strokeColor: '#FF0000',
+                   strokeOpacity: 0.8,
+                   strokeWeight: 1,
+                   fillColor: '#FF0000',
+                   fillOpacity: 0.02,
+                   map: map,
+                   center: point,
+                   radius: radiusSize * 1
                 });
 
+                console.log(al);
+                map.setCenter(point);
+                map.setZoom(18);
+                });
               }else{
                 console.log(counter.breached);
               }
@@ -261,13 +267,26 @@
         });
     },1000);
        
+        // var directionsService = new google.maps.DirectionsService;
+        // var directionsDisplay = new google.maps.DirectionsRenderer({
+        //   draggable: true,
+        //   map: map,
+        //   panel: document.getElementById('right-panel')
+        // });
+
+        // directionsDisplay.addListener('directions_changed', function() {
+        //   computeTotalDistance(directionsDisplay.getDirections());
+        // });
+    
+        // displayRoute(point1[x], point1[x], directionsService,
+        //     directionsDisplay);
        
       }
+      function alertSign(number, callback){
+        swal('Breached', "At "+number, 'warning');
 
-        policeMarker.addListener('click', function() {
-                infoWindow.setContent(policeMarker.name);
-                infoWindow.open(map, policeMarker);
-              });
+      }
+
       function downloadUrl(url, callback) {
         var request = window.ActiveXObject ?
             new ActiveXObject('Microsoft.XMLHTTP') :
@@ -309,6 +328,34 @@
         }
         return a;
       }
+
+    // function displayRoute(origin, destination, service, display) {
+    //     service.route({
+    //       origin: origin,
+    //       destination: destination,
+    //       travelMode: 'DRIVING',
+    //       avoidTolls: true,
+    //       optimizeWaypoints: true,
+    //       provideRouteAlternatives: true,
+    //     }, function(response, status) {
+    //       if(status === 'OK') {
+    //         display.setDirections(response);
+    //       } else {
+    //         alert('Could not display directions due to: ' + status);
+    //       }
+    //     });
+    // }
+
+    //   function computeTotalDistance(result) {
+    //     var total = 0;
+    //     var myroute = result.routes[0];
+    //     for (var i = 0; i < myroute.legs.length; i++) {
+    //       total += myroute.legs[i].distance.value;
+    //     }
+    //     total = total / 1000;
+    //     document.getElementById('total').innerHTML = total + ' km';
+    //   }
+
      </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1SFa75QzMfOtf7rudCh6RFgaNk6ptbzo&libraries=geometry&callback=initMap">
