@@ -118,7 +118,7 @@
           computeTotalDistance(directionsDisplay.getDirections());
         });
 		
-        displayRoute(point1[x], point1[x], directionsService,
+        displayRoute(point1[1], point1[1], directionsService,
             directionsDisplay);
 	  }
 
