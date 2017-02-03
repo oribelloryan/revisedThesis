@@ -493,8 +493,6 @@
                         swal("Success! You'll be redirected in " + time,'', 'success');
                         if(time < 1){
                           window.location.href = 'server_checkpointLabeling.php?operation_id='+msg.id;
-                        }else if(time < 0){
-                          window.location.href = 'server_checkpointLabeling.php?operation_id='+msg.id;
                         }
                       }, 1000);
                      }else{

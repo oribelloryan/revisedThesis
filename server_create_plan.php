@@ -24,7 +24,7 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
+    <link href="dist/css/starter-template.css" rel="stylesheet">
   </head>
 
   <body>
