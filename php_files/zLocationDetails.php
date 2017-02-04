@@ -83,4 +83,13 @@ html, body, #googft-mapCanvas {
 <b>id:</b> {id}<br>
 <b>geometry:</b> {geometry}
 </div>
+
+(function(marker, content, infowindow){ 
+         
+        return function() {
+
+           infowindow.setContent(content);
+           infowindow.open(map,marker);
+        };
+    })(targetMarker, content, infoWindow)); 
 </body>

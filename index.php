@@ -24,6 +24,7 @@
       background-color:#fbfbfb;
       background-position:center;
     }
+    </style>
   </head>
 
   <body>

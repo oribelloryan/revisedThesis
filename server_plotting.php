@@ -37,7 +37,7 @@
         height: 570px;
         visibility:hidden;
       }
-      #saveBtn, #address, #checkpointSpan, #changeTargetBtn{
+      #saveBtn, #address, #checkpointSpan, #changeTargetBtn, #targetSpan{
         visibility:hidden;
       }.modal {
     display: none;
@@ -74,10 +74,10 @@
    
     <div id="formradius">
     <!--<p id="mensahe">PLEASE SET RADIUS FIRST</p>-->
-    <label>PLEASE SET RADIUS FIRST</label>
+    <label id="mensahe">PLEASE SET RADIUS FIRST</label>
     <input type="number" class="form-control" id="radiussize" style="width:10%;">
-    <button onClick="changeradius()" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:100px;"><span id="set">SET RADIUS SIZE(m)</span></button>
-    <button onClick="changeTarget()" id="changeTargetBtn" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">CHANGE TARGET</button>
+    <button onClick="changeradius('changeRadius')" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:100px;"><span id="set">SET RADIUS SIZE(m)</span></button>
+    <button onClick="changeTarget('changeTarget')" id="changeTargetBtn" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">CHANGE TARGET</button>
     <button id="saveBtn" onClick="saving()" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">SAVE MAP</button>
     <br/>
     <!--<span id = "address"><span>Target Address: </span> <span id= "targetAddress">None</span> </span>-->
@@ -105,11 +105,14 @@
     var index = 0;
     var save = document.getElementById('saveBtn');
 
-    function changeradius(){
+    function changeradius(e){
         radiusSize = document.getElementById("radiussize").value;
         var radiusText = document.getElementById("set").innerHTML;
          if(radiusSize < 250 ){
-                swal("Size too small" ,"Radius size is small for recommended size", "error");
+                swal("Size too small" ,"Radius size is smaller than the recommended size", "error");
+                document.getElementById("map").style.visibility = 'hidden';
+         }else if(radiusSize > 1000){
+                swal("Size too big" ,"Radius size is bigger than the recommended size", "error");
                 document.getElementById("map").style.visibility = 'hidden';
          }else{
                 document.getElementById("map").style.visibility = 'visible';
@@ -125,9 +128,13 @@
                   //   swal("nothing");
                   // }else{
                   if(pastRadiusSize === radiusSize){
-                    swal("same radius");
+                    swal("Same Radius");
                   }else{
-                    swal("Changing radius size");
+                    if(perimeterOpen === false){
+                     swal("Radius Updated");
+                    }else{
+                    changeTarget(e);
+                    }
                   }
               
                   // }
@@ -135,19 +142,64 @@
          }
     }
 
-    function changeTarget(){
-      setMapOnAll(null);
-      circle.setMap(null);
-      circle = 0;
+    function changeTarget(source){
+      var title, text, confirm, swalTitle, swalText;
+      if(source === 'changeRadius'){
+      title = "Are you sure to update the Radius Size?";
+      text = "It will delete previous perimeter data";
+      confirm = "Update Radius";
+      swalTitle = "Update Radius Complete";
+      swalText = "Radius Updated";
+      }else if(source == 'changeTarget'){
+      title = "Are you sure to change target?";
+      text = "The target area will be deleted";
+      confirm = "Change Target";
+      swalTitle = "Change Target Complete";
+      swalText = "Map Cleared";
+      }
+
+      swal({
+         title: title,
+         text: text,
+         type: "",
+         showCancelButton: true,
+         confirmButtonColor: '#DD6B55',
+         confirmButtonText: confirm,
+         cancelButtonText: "Cancel",
+         closeOnConfirm: false,
+         closeOnCancel: true
+        },
+      function(isConfirm){
+        if(isConfirm){
+        removeEverything();
+        swal(swalTitle, swalText, "success");
+    }
+    });
+  }
+    function removeEverything(){
+        setMapOnAll(null);
+        circle.setMap(null);
+        markers = [];
+        perimeterOpen = false;
+        
+        document.getElementById("targetSpan").style.visibility = 'hidden';
+        document.getElementById("checkpointSpan").style.visibility = 'hidden';
+        document.getElementById("changeTargetBtn").style.visibility = 'hidden';
+        document.getElementById("targetLabel").style.visibility = 'hidden';
+        document.getElementById("checkpointsCounter").style.visibility = 'hidden';
+        document.getElementById("saveBtn").style.visibility = 'hidden';
     }
 
+     function setMapOnAll(map){
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+        }
+      }
 
     function snapToRoad(data){
       var latitude, longitude;
       var dot = locationPass(data);
-      console.log(dot);
-      console.log(data);
-     
+      
       $.ajax({ 
         url : "https://roads.googleapis.com/v1/nearestRoads?points="+dot+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI",
         type: "GET",
@@ -176,20 +228,6 @@
              id: index
          });
          checkpointsCounterFn();
-        infoWindow = new google.maps.InfoWindow();
-        // var deleteWindow = new google.maps.InfoWindow();
-        var content = $('<div class="marker-info-win">'+
-          '<div class="marker-inner-win"><span class="info-content">'+
-          '</span><button name="save-marker" class="save-marker" onClick="deleteMarker(this)" title="Save Label">DELETE</button>'+
-          '</div></div>');
-       google.maps.event.addListener(targetMarker,'click', (function(marker, content, infowindow){ 
-         
-        return function() {
-
-           infowindow.setContent(content);
-           infowindow.open(map,marker);
-        };
-    })(targetMarker, content[0], infoWindow)); 
 
        // google.maps.event.addListener(targetMarker, 'rightclick', (function(marker, content, infowindow){
           
@@ -288,6 +326,7 @@
 
     function checkpointsCounterFn(){
       var element = document.getElementById('checkpointsCounter');
+      element.style.visibility = 'visible';
       element.innerHTML = markers.length;
     }
 
@@ -448,6 +487,7 @@
                     },
                     function(isConfirm){
                       if (isConfirm){
+                        document.getElementById('targetLabel').style.visibility = "visible";
                         document.getElementById('targetLabel').innerHTML = back;
                         checkpointSpanVisibility(true);
                         swal("Area Locked", "Targeted Place", "success");
@@ -461,6 +501,7 @@
                         map.setZoom(16);
                         }
                         changeTargetBtn.style.visibility = "visible";
+                        document.getElementById('targetSpan').style.visibility = "visible";
                       } else {
                         swal("Cancelled");
                       }

@@ -173,6 +173,7 @@
     var locationAddress;
     var infoWindow;
     var locationLat, locationLng;
+    var checkpointAddress;
 
     function initMap(){
         map = new google.maps.Map(document.getElementById('map'), {
@@ -275,15 +276,17 @@
           });
 
     // https://interceptorpnp.000webhostapp.com/
-     downloadUrl('mobile_checkpoints_target.php/?id='+oppId, function(data) {
+     downloadUrl('mobile_checkpoints_target.php?id='+oppId, function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
             Array.prototype.forEach.call(markers, function(markerElem) {
-              var name = markerElem.getAttribute('operation_id');
+              var name = markerElem.getAttribute('name');
               var point = new google.maps.LatLng(
                   parseFloat(markerElem.getAttribute('lat')),
                   parseFloat(markerElem.getAttribute('lng')));
-
+              if( name === checkpointName){
+                checkpointAddress = point;
+              }
               var infowincontent = document.createElement('div');
               var strong = document.createElement('strong');
               strong.textContent = name
@@ -291,7 +294,7 @@
               infowincontent.appendChild(document.createElement('br'));
 
               var text = document.createElement('text');
-              text.textContent = name
+              text.textContent = name;
               infowincontent.appendChild(text);
               var image = {
                   url: 'images/baricade2.png',
@@ -312,6 +315,9 @@
               });
             });
           });
+            console.log("check"+checkpointAddress);
+            console.log("loc"+locationAddress);
+           
      // downloadUrl('mobile_othersTracking.php', function(data){
      //  console.log(data);
      // });
@@ -320,7 +326,7 @@
        var intervalCounter = 0;
        setInterval(function(){
          var now = new Date();
-
+         directionService(checkpointAddress, locationAddress);
          $.ajax({
                type: "POST",
                url: "mobile_tracking.php",
@@ -446,6 +452,57 @@
             a.push(google.maps.geometry.spherical.computeOffset(center, radius, d));
         }
         return a;
+      }
+
+      function directionService(origin, destination){
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer({
+          draggable: true,
+          map: map,
+          panel: document.getElementById('right-panel')
+        });
+        directionsDisplay.setMap(map);
+        directionsDisplay.setOptions( { 
+          polylineOptions: {
+            strokeWeight: 4,
+            strokeOpacity: 1,
+            strokeColor:  'red' 
+        },
+          suppressMarkers: true } );
+
+        directionsDisplay.addListener('directions_changed', function() {
+          computeTotalDistance(directionsDisplay.getDirections());
+        });
+    
+        displayRoute(origin, destination, directionsService,
+            directionsDisplay);
+    }
+
+    function displayRoute(origin, destination, service, display) {
+        service.route({
+          origin: origin,
+          destination: destination,
+          travelMode: 'DRIVING',
+          avoidTolls: false,
+          optimizeWaypoints: true,
+          provideRouteAlternatives: true,
+        }, function(response, status) {
+          if(status === 'OK') {
+            display.setDirections(response);
+          } else {
+            alert('Could not display directions due to: ' + status);
+          }
+        });
+    }
+
+      function computeTotalDistance(result) {
+        var total = 0;
+        var myroute = result.routes[0];
+        for (var i = 0; i < myroute.legs.length; i++) {
+          total += myroute.legs[i].distance.value;
+        }
+        total = total / 1000;
+        document.getElementById('total').innerHTML = total + ' km';
       }
   </script>
    <script async defer
