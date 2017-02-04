@@ -10,8 +10,9 @@ $result = $conn->query($query);
 while ($row = $result->fetch(PDO::FETCH_ASSOC)){
  
   $r[] = $row;
-  
+
 }
+
 $data = array("polices" => $r);
 echo json_encode($data);
 ?>

@@ -32,7 +32,43 @@
   }
   #checkpoints{
     visibility: hidden;
-  }
+  } /*#right-panel {
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+
+      #right-panel select, #right-panel input {
+        font-size: 15px;
+      }
+
+      #right-panel select {
+        width: 100%;
+      }
+
+      #right-panel i {
+        font-size: 12px;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+        float: left;
+        width: 63%;
+        height: 100%;
+      }
+      #right-panel {
+        float: right;
+        width: 34%;
+        height: 100%;
+      }
+      .panel {
+        height: 100%;
+        overflow: auto;
+      }*/
   </style>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous">
@@ -42,16 +78,19 @@
   </head>
 
   <body>
+   <div id="right-panel">
+      <p>Total Distance: <span id="total"></span></p>
+    </div>
     <span id="target"></span>
     <span id="checkpoints" ></span>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/header.png" style="width:400px;"></center>
     </div>
 
-    <div class="container">
-    <p><h4><center>Operation :<span id="operation_name"></span></center></h4></p>
-    <p>Date Executed: <span id="date_executed"></span>
-    <p>Number of officers: <span id="num_officers"></span>
+    <div class="container" style="margin-top:20px;">
+    <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
+    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed: </p><span id="date_executed"></span>
+    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of officers: </p><p id="num_officers" style="margin-bottom:20px;"></p>
     <div id="map" ></div>
     <div id="formradius">
     <input type="number" id="radiussize">
@@ -62,8 +101,8 @@
     <script type="text/javascript">
     var radiusSize = 0;
     var policeMarkers = [];
+    var checkpointMarkers = [];
     var breachedSize = 0;
-    var breachedCounter = 1;
     // var breachedPoint = {
     //   lat: undefined, 
     //   lng: undefined,
@@ -137,7 +176,7 @@
               var point = new google.maps.LatLng(
                   parseFloat(markerElem.getAttribute('lat')),
                   parseFloat(markerElem.getAttribute('lng')));
-              console.log(point);
+              // console.log(point);
               infoWindow = new google.maps.InfoWindow({map:map});
 
               var infowincontent = document.createElement('div');
@@ -171,7 +210,7 @@
             });
           });
     // https://interceptorpnp.000webhostapp.com/
-     setInterval(function(){
+
      downloadUrl('mobile_checkpoints_target.php/?id='+getUrl(), function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
@@ -199,25 +238,31 @@
                   scaledSize: new google.maps.Size(30, 30)
                };
 
-              var marker = new google.maps.Marker({
+               marker = new google.maps.Marker({
                 map: map,
                 icon: image,
                 position: point,
+                name: name
               });
-              marker.addListener('click', function() {
-                infoWindow.setContent(infowincontent);
-                infoWindow.open(map, marker);
-              });
+               pushMarker(checkpointMarkers, marker, function(){
+
+               });
+                google.maps.event.addListener(marker, 'click', (function(marker, infowincontent) {
+                  return function(){
+                  infoWindow.setContent(infowincontent);
+                  infoWindow.open(map, marker);
+                }
+              })(marker, infowincontent));
             });
-            console.log(xml);
+            // console.log(xml);
           });
 
-         },1000);
-     
-     setInterval(function(){
+    
+    setInterval(function(){
     downloadUrl('server_tracking.php/?id='+getUrl(), function(data) {
+          // console.log(data);
            var dataPass = JSON.parse(data.response);
-          
+         
           for (var i = 0; i < dataPass.polices.length; i++) {
           var counter = dataPass.polices[i];
            // console.log(counter.counter_name);
@@ -238,10 +283,12 @@
                 map: map,
                 name: counter.name
               });
-              policeMarkers.push(policeMarker);
-              console.log(counter.breached);
+              pushMarker(policeMarkers, policeMarker, function(){
+
+              });
+              // console.log(counter.breached);
               if(counter.breached){
-                alertSign(counter.name, function(){
+                alertSign(1, counter.name, function(){
                   
                    var cityCircle = new google.maps.Circle({
                    strokeColor: '#FF0000',
@@ -254,37 +301,30 @@
                    radius: radiusSize * 1
                 });
 
-                console.log(al);
+                // console.log(al);
                 map.setCenter(point);
                 map.setZoom(18);
                 });
               }else{
-                console.log(counter.breached);
+                // console.log(counter.breached);
               }
           }
-          console.log(dataPass);
+          // console.log(dataPass);
            
         });
     },1000);
-       
-        // var directionsService = new google.maps.DirectionsService;
-        // var directionsDisplay = new google.maps.DirectionsRenderer({
-        //   draggable: true,
-        //   map: map,
-        //   panel: document.getElementById('right-panel')
-        // });
-
-        // directionsDisplay.addListener('directions_changed', function() {
-        //   computeTotalDistance(directionsDisplay.getDirections());
-        // });
-    
-        // displayRoute(point1[x], point1[x], directionsService,
-        //     directionsDisplay);
-       
+       // directionService(policeMarkers, checkpointMarkers);
+       for( var i = 0; i < policeMarkers.length; i++){
+        console.log(policeMarkers[i]);
+       }
+      
       }
-      function alertSign(number, callback){
-        swal('Breached', "At "+number, 'warning');
 
+      function alertSign(number, loc, callback){
+        if(number === 1){
+          // swal('Breached', "At " + loc, 'warning');
+        }
+        number = 0;
       }
 
       function downloadUrl(url, callback) {
@@ -305,6 +345,7 @@
 
       function doNothing() {}
 
+     
   
        function perimeter(loc, size, map){
         circle = new google.maps.Polygon({
@@ -329,33 +370,53 @@
         return a;
       }
 
-    // function displayRoute(origin, destination, service, display) {
-    //     service.route({
-    //       origin: origin,
-    //       destination: destination,
-    //       travelMode: 'DRIVING',
-    //       avoidTolls: true,
-    //       optimizeWaypoints: true,
-    //       provideRouteAlternatives: true,
-    //     }, function(response, status) {
-    //       if(status === 'OK') {
-    //         display.setDirections(response);
-    //       } else {
-    //         alert('Could not display directions due to: ' + status);
-    //       }
-    //     });
-    // }
+    function directionService(origin, destination){
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer({
+          draggable: true,
+          map: map,
+          panel: document.getElementById('right-panel')
+        });
 
-    //   function computeTotalDistance(result) {
-    //     var total = 0;
-    //     var myroute = result.routes[0];
-    //     for (var i = 0; i < myroute.legs.length; i++) {
-    //       total += myroute.legs[i].distance.value;
-    //     }
-    //     total = total / 1000;
-    //     document.getElementById('total').innerHTML = total + ' km';
-    //   }
+        directionsDisplay.addListener('directions_changed', function() {
+          computeTotalDistance(directionsDisplay.getDirections());
+        });
+    
+        displayRoute(origin, destination, directionsService,
+            directionsDisplay);
+    }
 
+    function displayRoute(origin, destination, service, display) {
+        service.route({
+          origin: origin,
+          destination: destination,
+          travelMode: 'DRIVING',
+          avoidTolls: true,
+          optimizeWaypoints: false,
+          provideRouteAlternatives: false,
+        }, function(response, status) {
+          if(status === 'OK') {
+            display.setDirections(response);
+          } else {
+            alert('Could not display directions due to: ' + status);
+          }
+        });
+    }
+
+      function computeTotalDistance(result) {
+        var total = 0;
+        var myroute = result.routes[0];
+        for (var i = 0; i < myroute.legs.length; i++) {
+          total += myroute.legs[i].distance.value;
+        }
+        total = total / 1000;
+        document.getElementById('total').innerHTML = total + ' km';
+      }
+
+      function pushMarker(array, data, callback){
+          array.push(data);
+       
+      }
      </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1SFa75QzMfOtf7rudCh6RFgaNk6ptbzo&libraries=geometry&callback=initMap">
