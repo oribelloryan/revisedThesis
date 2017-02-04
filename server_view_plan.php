@@ -37,6 +37,13 @@ function dateDifference($date1, $date2){
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
     <style>
+    body{
+      background-image:url('images/bg-1.jpg');
+      background-repeat:no-repeat;
+      background-size: 100% 190%; 
+      background-color:#fbfbfb;
+      background-position:center;
+    }
     .data_container { 
     border-radius: 50px;
     color:#444;

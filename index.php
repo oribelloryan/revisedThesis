@@ -16,6 +16,14 @@
 
     <!-- Custom styles for this template -->
     <link href="dist/css/starter-template.css" rel="stylesheet">
+    <style>
+    body{
+      background-image:url('images/bg-1.jpg');
+      background-repeat:no-repeat;
+      background-size: 100% 190%; 
+      background-color:#fbfbfb;
+      background-position:center;
+    }
   </head>
 
   <body>

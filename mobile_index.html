@@ -44,10 +44,10 @@
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
-<body>
+<body style="background-color:#fdfdfd;">
 <!-- Main Page -->
 <!-- Operation Details Page -->
-<div data-role="page" id="op-details">
+<div data-role="page" id="op-details" style="background-image:url('images/bg-3.jpg');background-position:center;background-repeat:no-repeat;background-size:100%;">
   <div data-role="header" style="background-color:#153d94;margin-top:-1px;">
     <center><img src="images/header.png" style="width:400px;margin-top:2px;"></center>
     <div data-role="navbar">
@@ -60,15 +60,14 @@
   </div>
 <!--Content for operation details -->
   <div data-role="main" class="ui-content" id="op-details">
-    <p>Operation Details Content...</p>
-    <p><h4><center>Operation :<span id="operation_name"></span></center></h4></p>
-    <p>Date Executed: <span id="date_executed"></span>
-    <p>Number of officers: <span id="num_officers"></span>
+    <p><h4 style="text-transform:uppercase;"><center>Operation :<span id="operation_name"></span></center></h4></p>
+    <p style="color:#b22805;font-weight:bold;text-transform:uppercase;">Date of Execution: </p><span id="date_executed"></span>
+    <p style="color:#b22805;font-weight:bold;text-transform:uppercase;">Number of Checkpoints: </p><span id="num_officers"></span>
   </div>
 </div> 
 
 <!--Page for Operation Map -->
-<div data-role="page" id="op-map">
+<div data-role="page" id="op-map" style="background-image:url('images/bg-4.jpg');background-position:center;background-repeat:no-repeat;background-size:100%;">
   <div data-role="header" style="background-color:#153d94;margin-top:-1px;">
     <center><img src="images/header.png" style="width:400px;margin-top:2px;"></center>
     <div data-role="navbar">
@@ -81,13 +80,13 @@
   </div>
 <!-- Content for Operation Map -->
   <div data-role="main" class="ui-content" id="op-details">
-    <p>Operation Map...</p>
-    <div id="map" ></div>
-    <p>Maps</p>
+    <p><h4 style="text-transform:uppercase;"><center>Operation :<span id="operation_name"></span></center></h4></p>
+    <p><h4 style="font-style:italic;color:#055fb2;text-decoration:underline;"><center>Location Map</center></h4></p>
+    <div id="map" style="width:100%;"></div>
   </div>
 </div>
 <!-- Page for Operation Breached -->
-<div data-role="page" id="breached">
+<div data-role="page" id="breached" style="background-image:url('images/bg-4.jpg');background-position:center;background-repeat:no-repeat;background-size:100%;">
   <div data-role="header" style="background-color:#153d94;margin-top:-1px;">
     <center><img src="images/header.png" style="width:400px;margin-top:2px;"></center>
     <div data-role="navbar">
