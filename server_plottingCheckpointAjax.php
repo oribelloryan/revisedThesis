@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 include('db_conn.php');
 
 $sql = "SELECT MAX(operation_id) as max FROM tbl_operations";

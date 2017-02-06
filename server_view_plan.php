@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 include('db_conn.php');
 
 $today = date("M-d-Y");
@@ -76,10 +77,11 @@ function dateDifference($date1, $date2){
 
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="dist/css/starter-template.css" rel="stylesheet">
-
+    <script src="dist/js/sweetalert-dev.js"></script>
+    <link rel="stylesheet" href="dist/css/sweetalert.css">
+    
     <link href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" >
   </head>
   <body>
@@ -109,7 +111,7 @@ function dateDifference($date1, $date2){
      $id = $result['operation_id'];
      echo '<a href="#" onClick="pressed('.$id.');"><tr>';
              echo "<td>" .$id."</td>";
-             echo "<td><p>" .$result['operation_name']."</p></td>";
+             echo "<td>" .$result['operation_name']."</td>";
              echo "<td><p>" .dateformatting($result['date_plan'])."</p></td>";
              echo "<td><p>" .dateformatting($result['date_execute'])."</p></td>";
      $neg = abs($diff);
@@ -135,14 +137,25 @@ function dateDifference($date1, $date2){
 
        $('#datatable tbody').on( 'click', 'td', function () {
           var id = table.row( this ).data()[0];
-          var x = confirm("Are you sure you want to redirect to this operation?");
-          if(x){
-             window.location.href = "server_renderingMap.php?operation_id=" + id;
-          }else{
-            return;
-          }
-} );
-        });
+          var operation = table.row( this ).data()[1];
+                swal({
+                      title: "You are to proceed in the operation "+operation+"?",
+                      text: "",
+                      type: "",
+                      showCancelButton: true,
+                      confirmButtonColor: '#DD6B55',
+                      confirmButtonText: 'Proceed',
+                      cancelButtonText: "Cancel",
+                      closeOnConfirm: false,
+                      closeOnCancel: true
+                    },
+                    function(isConfirm){
+                      if (isConfirm){
+                         window.location.href = "server_renderingMap.php?operation_id=" + id;
+                      } 
+                    });
+                  });
+                  });
     </script>
   </body>
 </html>

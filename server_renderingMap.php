@@ -32,69 +32,31 @@
   }
   #checkpoints{
     visibility: hidden;
-  } /*#right-panel {
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
-
-      #right-panel select, #right-panel input {
-        font-size: 15px;
-      }
-
-      #right-panel select {
-        width: 100%;
-      }
-
-      #right-panel i {
-        font-size: 12px;
-      }
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-        float: left;
-        width: 63%;
-        height: 100%;
-      }
-      #right-panel {
-        float: right;
-        width: 34%;
-        height: 100%;
-      }
-      .panel {
-        height: 100%;
-        overflow: auto;
-      }*/
+  }
   </style>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous">
       </script>
 
-
   </head>
 
   <body>
-   <div id="right-panel">
-      <p>Total Distance: <span id="total"></span></p>
-    </div>
-    <span id="target"></span>
-    <span id="checkpoints" ></span>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/header.png" style="width:400px;"></center>
     </div>
-
+    <!--  <div id="right-panel">
+      <p>Total Distance: <span id="total"></span></p>
+    </div> -->
+    <span id="target"></span>
+    <span id="checkpoints" ></span>
     <div class="container" style="margin-top:20px;">
     <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed: </p><span id="date_executed"></span>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of officers: </p><p id="num_officers" style="margin-bottom:20px;"></p>
     <div id="map" ></div>
     <div id="formradius">
-    <input type="number" id="radiussize">
-    <button onClick="release()">Coordinates</button>
+    <!-- <input type="number" id="radiussize"> -->
+    <!-- <button onClick="release()">Coordinates</button> -->
     </div>
     </div><!-- /.container -->
     <script src="js/boundary.js"></script>
@@ -103,6 +65,7 @@
     var policeMarkers = [];
     var checkpointMarkers = [];
     var breachedSize = 0;
+    var breachedArray = [];
     // var breachedPoint = {
     //   lat: undefined, 
     //   lng: undefined,
@@ -286,28 +249,7 @@
               pushMarker(policeMarkers, policeMarker, function(){
 
               });
-              // console.log(counter.breached);
-              if(counter.breached){
-                alertSign(1, counter.name, function(){
-                  
-                   var cityCircle = new google.maps.Circle({
-                   strokeColor: '#FF0000',
-                   strokeOpacity: 0.8,
-                   strokeWeight: 1,
-                   fillColor: '#FF0000',
-                   fillOpacity: 0.02,
-                   map: map,
-                   center: point,
-                   radius: radiusSize * 1
-                });
-
-                // console.log(al);
-                map.setCenter(point);
-                map.setZoom(18);
-                });
-              }else{
-                // console.log(counter.breached);
-              }
+             
           }
           // console.log(dataPass);
            
@@ -318,13 +260,39 @@
         console.log(policeMarkers[i]);
        }
       
-      }
+        setInterval(function(){
+            downloadUrl('server_breached.php/?id='+getUrl(), function(data) {
+              var dataPass = JSON.parse(data.response);
+              console.log(dataPass);
+              for (var i = 0; i < dataPass.breached.length; i++) {
+              var breached = dataPass.breached[i];
+              var point = {
+                  lat: breached.lat * 1,
+                  lng: breached.lng * 1
+              };
 
-      function alertSign(number, loc, callback){
-        if(number === 1){
-          // swal('Breached', "At " + loc, 'warning');
-        }
-        number = 0;
+              if(breached.breached === 'yes'){
+              swal('Breached', "At " + breached.name, 'warning');
+              var cityCircle = new google.maps.Circle({
+                   strokeColor: '#FF0000',
+                   strokeOpacity: 0.8,
+                   strokeWeight: 1,
+                   fillColor: '#FF0000',
+                   fillOpacity: 0.02,
+                   map: map,
+                   center: point,
+                   radius: radiusSize * 1
+                });
+
+                breachedArray.push(breached);
+                map.setCenter(point);
+                map.setZoom(18);
+                downloadUrl('server_breachedUpdating.php/?checkpoint='+breached.checkpoint_id, function(data){
+                });
+              }
+            }
+            });
+        }, 3000);
       }
 
       function downloadUrl(url, callback) {

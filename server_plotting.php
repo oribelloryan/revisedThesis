@@ -282,7 +282,7 @@
        // });
        circle = new google.maps.Polygon({
         map: map,
-        paths: circlePath(loc , radiusSize, 360),
+        paths: circlePath(loc , radiusSize, 10),
         center: loc,
         strokeColor: '#FF0000',
         strokeOpacity: 0.35,
@@ -470,8 +470,6 @@
         google.maps.event.addListener(map, 'click', function(event) {
         isOfCity =  google.maps.geometry.poly.containsLocation(event.latLng, boundary);
         if(perimeterOpen === false){
-          
-          
               if(isOfCity){
                targetAddress(locationPass(event.latLng), function(back){
                     swal({
@@ -512,20 +510,13 @@
                   swal('Out of Bounds', 'That is not part of San Juan City', 'warning');
               }
         }else{
-          // google.maps.event.trigger(circle, 'click');
-          // google.maps.event.addListener(circle, 'click', function(e){
-          //   console.log(e.latLng);
-          //   snapToRoad(e.latLng);
-          // });
-          // console.log(event);
-       
-          var isOfPerimeter = google.maps.geometry.poly.containsLocation(event.latLng, circle);
-            if(isOfCity){
-              if(isOfPerimeter){
-                  snapToRoad(event.latLng);
-              }else{
-                  swal('Out of Bounds', 'that is not within the perimeter', 'warning');
-              }
+           var isOfPerimeter = google.maps.geometry.poly.containsLocation(event.latLng, circle);
+           if(isOfCity){
+               if(isOfPerimeter){
+                   snapToRoad(event.latLng);
+               }else{
+                   swal('Out of Bounds', 'that is not within the perimeter', 'warning');
+               }
             }else{
                   swal('Out of Bounds', 'That is not part of San Juan City', 'warning');
             }
@@ -574,7 +565,7 @@
                     data: {
                        markers: passData,
                        radius: radiusSize,
-                       checkpoint: markers.length
+                       checkpoint: markers.length - 1
                     },
                     success: function(msg){ 
                       var msg = JSON.parse(msg);

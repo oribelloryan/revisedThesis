@@ -1,5 +1,6 @@
 <?php
-require("db_conn.php");
+header('Access-Control-Allow-Origin: *');
+include("db_conn.php");
 
 // Get parameters from URL
 $id = $_GET["id"];

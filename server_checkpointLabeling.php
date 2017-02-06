@@ -16,155 +16,171 @@
 
     <!-- Custom styles for this template -->
     <link href="dist/css/starter-template.css" rel="stylesheet">
+    <link href="dist/css/starter-template.css" rel="stylesheet">
+    <script src="dist/js/sweetalert-dev.js"></script>
+    <link rel="stylesheet" href="dist/css/sweetalert.css">
+    <style>
+      #map{
+        width: 100%;
+        height: 550px; 
+        margin: auto;
+      }
+      #target{
+        visibility: hidden;
+      }
+      #checkpoints{
+        visibility: hidden;
+      }.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .8) url('images/load.gif') 50% 50% no-repeat;
+    }
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+    body.loading {
+    /*background-color: red;*/
+    overflow: hidden;
+  }
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+    body.loading .modal {
+    display: block;
+  }
+    </style>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous">
     </script>
-  <style>
-  #map{
-       width: 100%;
-       height: 550px; 
-       margin: auto;
-       }
-  #target{
-    visibility: hidden;
-
-  }
-  #checkpoints{
-    visibility: hidden;
-  }
-  </style>
-
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous">
-      </script>
-
-
   </head>
-
   <body>
-    <span id="target"></span>
-    <span id="checkpoints" ></span>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/header.png"" style="width:400px;"></center>
     </div>
+    <div class="modal"></div>
     <a href="index.php"><img src="images/breached_node.png" style="width:50px;" align="right"></a>
     <div class="container" style="margin-top:50px;">    
-    <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
-    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed:</p> <span id="date_executed"></span>
-    <p id = 'checkpointSpan' style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoints:</p> <p id="num_officers" style="margin-bottom:20px;"></p>
-    <div id="map" ></div>
-    <div id="formradius">
-    <input type="number" id="radiussize">
-    <button onClick="release()">Coordinates</button>
-    </div>
+      <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
+      <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed:</p> <span id="date_executed"></span>
+      <p id = 'checkpointSpan' style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoints:</p> <p id="num_officers" style="margin-bottom:20px;"></p>
+      <div id="map" ></div>
+      <div id="formradius">
+        <input type="number" id="radiussize">
+        <button onClick="release()">Coordinates</button>
+      </div>
     </div><!-- /.container -->
     <script src="js/boundary.js"></script>
     <script type="text/javascript">
-    var markers = [];
-    var radiusSize = 0;
-  function getUrl(){
-      var url = window.location.href;
-      var start = url.indexOf('=')+1;
-      var id = url.substring(start);
-      return id;
-    };
-    // window.onLoad = getUrl(); https://interceptorpnp.000webhostapp.com/
-    var oppId = getUrl();
-    var target;
-  
-    $.ajax({
-    type: "POST",
-    url: "mobile_map_renderingajax.php",
-    data: {
-    id: oppId,
-        },
-        success: function(msg){
-          var parsed = JSON.parse(msg);
-          target = parsed.target;
-          checkpoint = parsed.checkpoints;
-          document.getElementById('operation_name').innerHTML = parsed.name;
-          document.getElementById('date_executed').innerHTML = parsed.date_execute;
-          document.getElementById('num_officers').innerHTML = parsed.officers;
+        var markers = [];
+        var radiusSize = 0;
+        function getUrl(){
+            var url = window.location.href;
+            var start = url.indexOf('=')+1;
+            var id = url.substring(start);
+            return id;
         }
+    // window.onLoad = getUrl(); https://interceptorpnp.000webhostapp.com/
+        var oppId = getUrl();
+        var target;
+  
+        $.ajax({
+            type: "POST",
+            url: "mobile_map_renderingajax.php",
+            data: {
+            id: oppId,
+        },
+            success: function(msg){
+                var parsed = JSON.parse(msg);
+                target = parsed.target;
+                checkpoint = parsed.checkpoints;
+                document.getElementById('operation_name').innerHTML = parsed.name;
+                document.getElementById('date_executed').innerHTML = parsed.date_execute;
+                document.getElementById('num_officers').innerHTML = parsed.officers;
+            }
         });
-    var minZoomLevel = 15;
-    var centeroftheearth = {lat: 14.600353, lng: 121.036745};    
-    var map;
-    var markers = [];
+        var minZoomLevel = 15;
+        var centeroftheearth = {lat: 14.600353, lng: 121.036745};    
+        var map;
+        var markers = [];
 
-    function initMap(){
-    map = new google.maps.Map(document.getElementById('map'), {
-    zoom: minZoomLevel,
-    center: centeroftheearth ,
-    mapTypeId: 'roadmap'
-    });
-
-    var boundary = new google.maps.Polygon({paths: boundaries});
-    
-    var boundaryLine = new google.maps.Polyline({
-          path: boundaries,
-          geodesic: true,
-          strokeColor: '#FF0000',
-          strokeOpacity: 1.0,
-          strokeWeight: 2
-        });
-
-    boundaryLine.setMap(map);
-    // https://interceptorpnp.000webhostapp.com/
-    var infoWindow = new google.maps.InfoWindow();
-    downloadUrl('mobile_target_marker.php/?id='+getUrl(), function(data) {
-            var xml = data.responseXML;
-            var markers = xml.documentElement.getElementsByTagName('marker');
-
-            Array.prototype.forEach.call(markers, function(markerElem) {
-                radiusSize = markerElem.getAttribute('radius');
-           
-              var name = markerElem.getAttribute('operation_id');
-              var point = new google.maps.LatLng(
-                  parseFloat(markerElem.getAttribute('lat')),
-                  parseFloat(markerElem.getAttribute('lng')));
-
-              var infowincontent = document.createElement('div');
-              var strong = document.createElement('strong');
-              strong.textContent = name
-              infowincontent.appendChild(strong);
-              infowincontent.appendChild(document.createElement('br'));
-
-              perimeter(point, map);
-
-              var text = document.createElement('text');
-              text.textContent = name
-              infowincontent.appendChild(text);
-              var image = {
-                  url: 'images/crosshair.png',
-           // size: new google.maps.Size(71, 71),
-                  anchor: new google.maps.Point(10, 10),
-                  scaledSize: new google.maps.Size(25, 25)
-               };
-
-              var targetMarker = new google.maps.Marker({
-                position: point,
-                icon: image,
-                map: map,
-              });
-
-              targetMarker.addListener('click', function() {
-                infoWindow.setContent(infowincontent);
-                infoWindow.open(map, marker);
-              });
+        function initMap(){
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: minZoomLevel,
+                center: centeroftheearth ,
+                mapTypeId: 'roadmap'
             });
-          });
+
+            var boundary = new google.maps.Polygon({paths: boundaries});
+    
+            var boundaryLine = new google.maps.Polyline({
+                path: boundaries,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+
+            boundaryLine.setMap(map);
     // https://interceptorpnp.000webhostapp.com/
-     downloadUrlCheck('server_checkpoints_target.php/?id='+getUrl(), function(data) {
+            var infoWindow = new google.maps.InfoWindow();
+            downloadUrl('mobile_target_marker.php/?id='+getUrl(), function(data) {
+                var xml = data.responseXML;
+                var markers = xml.documentElement.getElementsByTagName('marker');
+
+                Array.prototype.forEach.call(markers, function(markerElem) {
+                    radiusSize = markerElem.getAttribute('radius');
+           
+                    var name = markerElem.getAttribute('operation_id');
+                    var point = new google.maps.LatLng(
+                        parseFloat(markerElem.getAttribute('lat')),
+                        parseFloat(markerElem.getAttribute('lng')));
+
+                    var infowincontent = document.createElement('div');
+                    var strong = document.createElement('strong');
+                    strong.textContent = name
+                    infowincontent.appendChild(strong);
+                    infowincontent.appendChild(document.createElement('br'));
+
+                    perimeter(point, map);
+
+                    var text = document.createElement('text');
+                    text.textContent = name
+                    infowincontent.appendChild(text);
+                    var image = {
+                        url: 'images/crosshair.png',
+                     // size: new google.maps.Size(71, 71),
+                        anchor: new google.maps.Point(10, 10),
+                        scaledSize: new google.maps.Size(25, 25)
+                    };
+
+                    var targetMarker = new google.maps.Marker({
+                        position: point,
+                        icon: image,
+                        map: map,
+                    });
+
+                    targetMarker.addListener('click', function() {
+                        infoWindow.setContent(infowincontent);
+                        infoWindow.open(map, marker);
+                    });
+                });
+            });
+    // https://interceptorpnp.000webhostapp.com/
+            downloadUrlCheck('server_checkpoints_target.php/?id='+getUrl(), function(data) {
           
-           var dataPass = JSON.parse(data);
-          for (var i = 0; i < dataPass.checkpoints.length; i++) {
-          var counter = dataPass.checkpoints[i];
+                var dataPass = JSON.parse(data);
+                for (var i = 0; i < dataPass.checkpoints.length; i++) {
+                    var counter = dataPass.checkpoints[i];
            //console.log(counter.counter_name);
-          var point = {
-            lat: counter.lat * 1,
-            lng: counter.lng * 1
-          };
-          createMarker(counter.id, point, infoWindow, counter.name, map);
-          }
+                    var point = {
+                        lat: counter.lat * 1,
+                        lng: counter.lng * 1
+                    };
+                    createMarker(counter.id, point, infoWindow, counter.name, map);
+                }
            
         });
     
@@ -181,8 +197,14 @@
             },
           success: function(msg){ 
           callback(msg);
-      }
-    });
+           },
+            beforeSend: function(){
+                $("body").addClass("loading");
+            },
+            complete: function(){
+                $("body").removeClass("loading");
+            }
+      });
       }
 
       function createMarker(checkpointId, point, infoWindow, name, map){
@@ -193,7 +215,7 @@
           '<div class="marker-inner-win"><span class="info-content">'+
           '<h4 class="marker-heading">'+checkpointId+'</h4>'+ 
           '<input type="text" class="checkpointLabel" name="checkpointLabel">'+
-          '</span><button name="save-marker" class="save-marker" title="Save Label">Save Label</button>'+
+          '</span><button name="save-marker" class="save-marker" title="Save Name">Save Label</button>'+
           '</div></div>');    
           }else{
           contentString = $('<div class="marker-info-win">'+
@@ -225,13 +247,20 @@
                  console.log(value);
                  console.log(marker.name);
                 if(value.value === ''){
-                alert("Add label for the checkpoint");
+                swal("Please provide checkpoint name");
                 }else{
                 updateLabel(checkpointId, value.value, function(e){
-                  alert("Updated");
                    console.log(e);
+                     contentString = $('<div class="marker-info-win">'+
+                       '<div class="marker-inner-win"><span class="info-content">'+
+                       '<h4 class="marker-heading">'+checkpointId+'</h4>'+ 
+                       '<h5>Name: '+e.name+'</h5>'+
+                       '</span>'+
+                       '</div></div>');
                    infoWindow.setContent(contentString[0]);
                    infoWindow.open(map, marker);
+                   swal("Name Added");
+                   // location.reload();
                 });
                 }
                });

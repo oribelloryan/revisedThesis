@@ -73,6 +73,11 @@ function dateDifference($date1, $date2){
     <!-- Custom styles for this template -->
     <link href="dist/css/starter-template.css" rel="stylesheet">
 
+     <!-- Custom styles for this template -->
+    <link href="dist/css/starter-template.css" rel="stylesheet">
+    <script src="dist/js/sweetalert-dev.js"></script>
+    <link rel="stylesheet" href="dist/css/sweetalert.css">
+
     <link href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
@@ -100,8 +105,8 @@ function dateDifference($date1, $date2){
      $diff = $d[1];
      $id = $result['operation_id'];
      echo '<a href="#" onClick="pressed('.$id.');"><tr>';
-             echo "<td><p>" .$id."</p></td>";
-             echo "<td><p>" .$result['operation_name']."</p></td>";
+             echo "<td>" .$id."</td>";
+             echo "<td>" .$result['operation_name']."</td>";
              echo "<td><p>" .dateformatting($result['date_plan'])."</p></td>";
              echo "<td><p>" .dateformatting($result['date_execute'])."</p></td>";
      $neg = abs($diff);
@@ -121,11 +126,32 @@ function dateDifference($date1, $date2){
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
     <script src="dist/js/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+     <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     <script>
     $(document).ready(function(){
-       var table = $('#datatable').dataTable();
-       alert(table);
-        });
+       var table = $('#datatable').DataTable();
+
+       $('#datatable tbody').on( 'click', 'td', function () {
+          var id = table.row( this ).data()[0];
+          var operation = table.row( this ).data()[1];
+                swal({
+                      title: "You are to proceed in the operation "+operation+"?",
+                      text: "",
+                      type: "",
+                      showCancelButton: true,
+                      confirmButtonColor: '#DD6B55',
+                      confirmButtonText: 'Proceed',
+                      cancelButtonText: "Cancel",
+                      closeOnConfirm: false,
+                      closeOnCancel: true
+                    },
+                    function(isConfirm){
+                      if (isConfirm){
+                         window.location.href = "server_renderingMap.php?operation_id=" + id;
+                      } 
+                    });
+                  });
+                  });
     </script>
   </body>
 </html>

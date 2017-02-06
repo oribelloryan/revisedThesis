@@ -51,7 +51,7 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
         <label>Operation Name</label>
         <input type="text" class="form-control" name="operation_name" required>
         <label>Operation Password</label>
-        <input type="text" class="form-control" name="operation_password" required>
+        <input type="password" class="form-control" name="operation_password" required>
         <label>Date of Execution</label>
         <input type="date" class="form-control" name="execute" required>
         <!-- <label>Number of Officers Required</label>
