@@ -9,8 +9,8 @@ $op_pass = $_POST['operation_password'];
 $date_execute = $_POST['execute'];
 $officers = $_POST['num_officers'];
 
-$sql_insert = "INSERT INTO tbl_operations (operation_name, operation_password, date_plan, date_execute, num_officers)
-VALUES ('$op_name','$op_pass',current_date(),'$date_execute','$officers')";
+$sql_insert = "INSERT INTO tbl_operations (operation_name, operation_password, date_plan, date_execute, num_officers, mission_status)
+VALUES ('$op_name','$op_pass',current_date(),'$date_execute','$officers', 'not done')";
 
 $commit = $conn->query($sql_insert);
 $_SESSION['id'] = $conn->lastInsertId();

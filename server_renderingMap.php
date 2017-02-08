@@ -49,10 +49,11 @@
     </div> -->
     <span id="target"></span>
     <span id="checkpoints" ></span>
+    <button  id='missionCompleteBtn' class="btn pull-right btn-default " style="background-color:#bd593d;color:#ffffff;width:20%;margin-top:10px;margin-left: 80%">MISSION COMPLETE</button>
     <div class="container" style="margin-top:20px;">
     <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed: </p><span id="date_executed"></span>
-    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of officers: </p><p id="num_officers" style="margin-bottom:20px;"></p>
+    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoint(s): </p><p id="num_officers" style="margin-bottom:20px;"></p>
     <div id="map" ></div>
     <div id="formradius">
     <!-- <input type="number" id="radiussize"> -->
@@ -107,6 +108,27 @@
     var map;
     var markers = [];
 
+    var missionComplete = document.getElementById('missionCompleteBtn');
+
+    missionComplete.addEventListener('click', function(){
+      swal({
+           title: "Mission Complete",
+           text: "Proceeding this event will finish the on-going operation",
+           type: "warning",
+           showCancelButton: true,
+           confirmButtonColor: '#DD6B55',
+           confirmButtonText: 'Proceed',
+           cancelButtonText: "Cancel",
+           closeOnConfirm: false,
+           closeOnCancel: true
+          }, function(isConfirm){
+            if (isConfirm){
+            swal("bye", "bye", "success");
+            } 
+        });
+
+    });
+
     function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
     zoom: minZoomLevel,
@@ -140,14 +162,7 @@
                   parseFloat(markerElem.getAttribute('lat')),
                   parseFloat(markerElem.getAttribute('lng')));
               // console.log(point);
-              infoWindow = new google.maps.InfoWindow({map:map});
-
-              var infowincontent = document.createElement('div');
-              var strong = document.createElement('strong');
-              strong.textContent = name
-              infowincontent.appendChild(strong);
-              infowincontent.appendChild(document.createElement('br'));
-
+             
               perimeter(point, radiusSize, map);
 
               var text = document.createElement('text');
@@ -240,22 +255,28 @@
                   anchor: new google.maps.Point(10, 10),
                   scaledSize: new google.maps.Size(40, 40)
                };
-               policeMarker = new google.maps.Marker({
+            var policeMarker = new google.maps.Marker({
                 position: point,
                 icon: image,
                 map: map,
                 name: counter.name
               });
-              pushMarker(policeMarkers, policeMarker, function(){
-
-              });
-             
+            
+              // pushMarker(policeMarkers, policeMarker, function(){
+              //    directionService(new google.maps.LatLng(policeMarkers.position), new google.maps.LatLng( checkpointMarkers.position));
+              // });
+              google.maps.event.addListener(marker, 'click', (function(marker, infowincontent) {
+                  return function(){
+                  infoWindow.setContent(infowincontent);
+                  infoWindow.open(map, marker);
+                }
+              })(policeMarker, infowincontent));
           }
           // console.log(dataPass);
            
         });
     },1000);
-       // directionService(policeMarkers, checkpointMarkers);
+      
        for( var i = 0; i < policeMarkers.length; i++){
         console.log(policeMarkers[i]);
        }
@@ -283,6 +304,18 @@
                    center: point,
                    radius: radiusSize * 1
                 });
+
+              var image = {
+                  url: 'images/barricade_breached.png',
+           // size: new google.maps.Size(71, 71),
+                  anchor: new google.maps.Point(10, 10),
+                  scaledSize: new google.maps.Size(40, 40)
+               };
+               barricade_breached = new google.maps.Marker({
+                position: point,
+                icon: image,
+                map: map,
+              });
 
                 breachedArray.push(breached);
                 map.setCenter(point);
@@ -323,7 +356,7 @@
         strokeColor: '#FF0000',
         strokeOpacity: 0.35,
         strokeWeight: 2,
-        clickable: true,
+        clickable: false,
         fillColor: '#FF0000',
         fillOpacity: 0.05,
       });

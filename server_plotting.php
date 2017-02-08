@@ -101,8 +101,8 @@
     var circle;
     var perimeterOpen = false;
     var isOfCity;
-    var pastRadiusSize;
     var index = 0;
+    var pastRadiusSize;
     var save = document.getElementById('saveBtn');
 
     function changeradius(e){
@@ -213,7 +213,9 @@
           lat: latitude,
           lng: longitude
         };
+        var ofPerimeter = google.maps.geometry.poly.containsLocation(new google.maps.LatLng(pos), circle);
 
+        if(ofPerimeter){
          var image = {
           url: 'images/baricade2.png', // image is 512 x 512
           scaledSize: new google.maps.Size(28, 28), // scaled size
@@ -221,43 +223,42 @@
             anchor: new google.maps.Point(0, 0)  
 
         }; 
+        var posTarget = pos.lat+','+pos.lng;
+        targetAddress(posTarget, function(e){
          var targetMarker = new google.maps.Marker({
              position: pos,
              icon: image,
              map: map,
-             id: index
+             id: posTarget
          });
-         checkpointsCounterFn();
+         var contentString = "<div>"+
+         "<p>Location Address: "+e+"</p>"+
+         '<input type="button" class="deleteMarker" data-value="'+posTarget+'" onClick="deleteMarker(this)" value="DELETE MARKER"/>'+
+         "</div>";
+         var infowindow = new google.maps.InfoWindow();
+         google.maps.event.addListener(targetMarker, 'click', function() {
+                infowindow.setContent(contentString);
+                infowindow.open(map, targetMarker); // click on marker opens info window
 
-       // google.maps.event.addListener(targetMarker, 'rightclick', (function(marker, content, infowindow){
-          
-       //    return function(){
-       //    infoWindow.setContent("deletMe");
-       //    infowindow.open(map, marker);
-       //    };
-
-       // })(targetMarker, "deleteContent", deleteWindow));
-
+        });
+         
           targetMarker.setAnimation(google.maps.Animation.DROP);
           targetMarker.setMap(map);
           markers.push(targetMarker);
+           checkpointsCounterFn();
+
           save.style.visibility = 'visible';
+           });
+          }else{
+            swal('Sorry', 'The targeted road is not within the perimeter', 'warning');
+          }
          },
          complete: function(){
             $("body").removeClass("loading");
          }
         });
-        // google.maps.event.addListener(marker, 'click', function() {
-        //         infowindow.open(map,marker); // click on marker opens info window 
-        // });
-        
-
-        // //###### remove marker #########/
-        // var removeBtn   = contentString.find('button.remove-marker')[0];
-        // google.maps.event.addDomListener(removeBtn, "click", function(event) {
-        //     targetMarker.setMap(null);
-        // });
-       index++;
+       
+      
     }
 
     function locationPass(e){
@@ -266,23 +267,28 @@
     }
 
     function deleteMarker(e){
-      alert(e);
+      var x = confirm('Are you sure to delete this checkpoint?');
+      if(x){
+      var value = e.getAttribute('data-value');
+      console.log(value);
+      console.log("pos"+markers[1].get('id'));
+      var i;
+      for(i = 0; i < markers.length; i++){
+        console.log(markers[i].get('id'));
+        if(markers[i].get('id') == value){
+        markers[i].setMap(null);
+        markers.splice(i,1);
+        checkpointsCounterFn();
+        }
+      }
+      }
+
     }
 
     function addPerimeter(loc){
-       // circle = new google.maps.Circle({
-       //      strokeColor: '#FF0000',
-       //      strokeOpacity: 0.8,
-       //      strokeWeight: 2,
-       //      fillColor: '#FF0000',
-       //      fillOpacity: 0.35,
-       //      map: map,
-       //      center: loc,
-       //      radius: radiusSize * 1        
-       // });
        circle = new google.maps.Polygon({
         map: map,
-        paths: circlePath(loc , radiusSize, 10),
+        paths: circlePath(loc , radiusSize, 360),
         center: loc,
         strokeColor: '#FF0000',
         strokeOpacity: 0.35,
@@ -304,10 +310,11 @@
              position: loc,
              icon: image,
              map: map,
-             id: index
+             id: markers.length
          });
 
         markers.push(targetMarker);
+        checkpointsCounterFn();
     }
 
     function setPerimeter(){
@@ -325,9 +332,11 @@
     }
 
     function checkpointsCounterFn(){
+
       var element = document.getElementById('checkpointsCounter');
+      element.innerHTML = markers.length - 1;
       element.style.visibility = 'visible';
-      element.innerHTML = markers.length;
+     
     }
 
     function circlePath(center,radius,points){
@@ -398,7 +407,7 @@
             mapTypeId: 'roadmap'
         });
         
-        // infoWindow = new google.maps.InfoWindow({map: map});
+        // 
         // infoWindow.setContent('center');
         // infoWindow.setPosition(map.getCenter());
         // if (navigator.geolocation) {
@@ -510,6 +519,7 @@
                   swal('Out of Bounds', 'That is not part of San Juan City', 'warning');
               }
         }else{
+             
            var isOfPerimeter = google.maps.geometry.poly.containsLocation(event.latLng, circle);
            if(isOfCity){
                if(isOfPerimeter){
@@ -520,12 +530,12 @@
             }else{
                   swal('Out of Bounds', 'That is not part of San Juan City', 'warning');
             }
-
+        
          }
       });
+
     }
-
-
+  
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
         infoWindow.setPosition(pos);
         infoWindow.setContent(browserHasGeolocation ?
@@ -576,8 +586,6 @@
                         time = time - 1;
                         swal("Success! You'll be redirected in " + time,'', 'success');
                         if(time < 1){
-                          window.location.href = 'server_checkpointLabeling.php?operation_id='+msg.id;
-                        }else if(time < 0){
                           window.location.href = 'server_checkpointLabeling.php?operation_id='+msg.id;
                         }
                       }, 1000);

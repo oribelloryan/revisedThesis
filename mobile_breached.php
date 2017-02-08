@@ -6,7 +6,7 @@ header('Access-Control-Allow-Origin: *');
 		$checkpointName = $_POST['checkpointName'];
 		$id = $_POST['id'];
 		$password = $_POST['password'];
-		$stmt = $conn->prepare("SELECT c.id AS id, o.lat AS lat, o.lng AS lng FROM tbl_operations AS t JOIN checkpoints AS c ON t.operation_id = c.operation_id JOIN on_going_operation AS o ON c.id = o.checkpoint_id WHERE t.operation_id = :op AND t.operation_password = :pa AND c.name = :na LIMIT 1");
+		$stmt = $conn->prepare("SELECT c.id AS id, o.lat AS lat, o.lng AS lng FROM tbl_operations AS t JOIN checkpoints AS c ON t.operation_id = c.operation_id JOIN on_going_operation AS o ON c.id = o.checkpoint_id WHERE t.operation_id = :op AND t.operation_password = :pa AND c.name = :na");
 		$stmt->bindValue(":op", $id);
 		$stmt->bindValue(":pa", $password);
 		$stmt->bindValue(":na", $checkpointName);
@@ -15,6 +15,7 @@ header('Access-Control-Allow-Origin: *');
 		$checkpoint_id = $row["id"];
 		$checkpoint_lat = $row["lat"];
 		$checkpoint_lng = $row["lng"];
+		
 		$date = date('Y-m-d H:i:s');
 
 		$breached = $conn->prepare("UPDATE on_going_operation SET breached = :br WHERE checkpoint_id = :cId");

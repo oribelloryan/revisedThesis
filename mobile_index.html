@@ -132,6 +132,8 @@
 <script src="js/boundary.js"></script>
  <script type="text/javascript">
   var breachedArray = [];
+  var distanceBetween;
+
   function getUrl(data, last){
       var url = window.location.href;
       var start = url.indexOf(data);
@@ -153,7 +155,7 @@
     
     $.ajax({
     type: "POST",
-    url: "https://interceptorpnp.000webhostapp.com/mobile_map_renderingajax.php",
+    url: "mobile_map_renderingajax.php",
     data: {
     id: oppId,
         },
@@ -233,7 +235,7 @@
         // https://interceptorpnp.000webhostapp.com/
          var searchUrl = 'mobile_target_marker.php?id=' + oppId;
 
-        downloadUrl('https://interceptorpnp.000webhostapp.com/mobile_target_marker.php/?id='+ oppId, function(data) {
+        downloadUrl('mobile_target_marker.php/?id='+ oppId, function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
 
@@ -252,6 +254,7 @@
               infowincontent.appendChild(document.createElement('br'));
 
               perimeter(point, map);
+              map.setCenter(point);
 
               var text = document.createElement('text');
               text.textContent = name
@@ -277,7 +280,7 @@
           });
 
     // https://interceptorpnp.000webhostapp.com/
-     downloadUrl('https://interceptorpnp.000webhostapp.com/mobile_checkpoints_target.php?id='+oppId, function(data) {
+     downloadUrl('mobile_checkpoints_target.php?id='+oppId, function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
             Array.prototype.forEach.call(markers, function(markerElem) {
@@ -320,50 +323,8 @@
             console.log("check"+checkpointAddress);
             console.log("loc"+locationAddress);
            
-     var breachedFn = setInterval(function(){
-            downloadUrl('https://interceptorpnp.000webhostapp.com/mobile_breachedUpdating.php/?id='+oppId, function(data) {
-              var dataPass = JSON.parse(data.response);
-              console.log(dataPass);
-              for (var i = 0; i < dataPass.breached.length; i++) {
-              var breached = dataPass.breached[i];
-              var point = {
-                  lat: breached.lat * 1,
-                  lng: breached.lng * 1
-              };
-              
-              
-              alert('Breached At '+ breached.name);
-              var cityCircle = new google.maps.Circle({
-                   strokeColor: '#FF0000',
-                   strokeOpacity: 0.8,
-                   strokeWeight: 1,
-                   fillColor: '#FF0000',
-                   fillOpacity: 0.02,
-                   map: map,
-                   center: point,
-                   radius: radiusSize * 1
-                });
-
-                 var image = {
-                  url: 'images/barricade_breached.png',
-                  anchor: new google.maps.Point(10, 10),
-                  scaledSize: new google.maps.Size(25, 25)
-               };
-
-              var targetMarker = new google.maps.Marker({
-                position: point,
-                icon: image,
-                map: map,
-               });
-
-                breachedArray.push(breached);
-                map.setCenter(point);
-                map.setZoom(18);
-
-                clearInterval(breachedFn);
-            }
-            });
-        }, 3000);
+     // var breachedFn = setInterval(function(){
+     //               }, 3000);
 
 
 
@@ -372,7 +333,7 @@
          var now = new Date();
          $.ajax({
                type: "POST",
-               url: "https://interceptorpnp.000webhostapp.com/mobile_tracking.php",
+               url: "mobile_tracking.php",
                data: {
                   name: checkpointName,
                   lat: locationLat,
@@ -385,24 +346,80 @@
                }
             });
          intervalCounter++;
+         downloadUrl('mobile_breachedUpdating.php/?id='+oppId, function(data) {
+              var dataPass = JSON.parse(data.response);
+              console.log(dataPass);
+              for (var i = 0; i < dataPass.breached.length; i++) {
+                var id = dataPass.breached[i].id
+                var breachedId = breachedArray.indexOf(id);
+                     if( breachedId == -1){
+
+                          var breached = dataPass.breached[i];
+                          var point = {
+                              lat: breached.lat * 1,
+                              lng: breached.lng * 1
+                          };
+              
+                          alert('Breached At '+ breached.name);
+                          var cityCircle = new google.maps.Circle({
+                              strokeColor: '#FF0000',
+                              strokeOpacity: 0.8,
+                              strokeWeight: 1,
+                              fillColor: '#FF0000',
+                              fillOpacity: 0.02,
+                              map: map,
+                              center: point,
+                              radius: radiusSize * 1
+                          });
+
+                          var imageBreached = {
+                              url: 'images/barricade_breached.png',
+                              anchor: new google.maps.Point(10, 10),
+                              scaledSize: new google.maps.Size(25, 25)
+                          };
+
+                          var breachedMarker = new google.maps.Marker({
+                              position: point,
+                              icon: imageBreached,
+                              map: map
+                          });
+
+                          breachedArray.push(dataPass.breached[i].id);
+                          map.setCenter(point);
+                          map.setZoom(18);
+                      }
+                       
+              
+                // clearInterval(breachedFn);
+            }
+            });
+
       }, 3000);
        
 
         var directionServiceFn = setInterval(function(){
+          if(distanceBetween < 0.05){
+
+          }else{
           directionService(checkpointAddress, locationAddress);
           // clearInterval(directionServiceFn);
+        }
         },5000);
+
     }
+      
         setInterval(function(){
         $.ajax({
               type: "POST",
-              url: "https://interceptorpnp.000webhostapp.com/mobile_othersTracking.php",
+              url: "mobile_othersTracking.php",
               data: {
                 name: checkpointName,
                 operation: oppId
               },
               success: function(data){
+                console.log(data);
                 var other = JSON.parse(data);
+                console.log(other);
                 for (var i = 0; i < other.otherPolice.length; i++) {
                   var counter = other.otherPolice[i];
                   var point = {
@@ -428,6 +445,7 @@
             }
         });
       }, 2000);
+        
 
 
       function downloadUrl(url, callback) {
@@ -455,7 +473,7 @@
            if(pass){
             $.ajax({
                type: "POST",
-               url: "https://interceptorpnp.000webhostapp.com/mobile_breached.php",
+               url: "mobile_breached.php",
                data: {
                   id: oppId,
                   password: pass,
@@ -553,6 +571,8 @@
           total += myroute.legs[i].distance.value;
         }
         total = total / 1000;
+        distanceBetween = total;
+        // alert(total);
         document.getElementById('total').innerHTML = total + ' km';
       }
   </script>

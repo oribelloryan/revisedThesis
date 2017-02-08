@@ -61,7 +61,7 @@
       <center><img src="images/header.png"" style="width:400px;"></center>
     </div>
     <div class="modal"></div>
-    <a href="index.php"><img src="images/breached_node.png" style="width:50px;" align="right"></a>
+    <a href="index.php"><img src="images/home.png" style="width:50px;" align="right"></a>
     <div class="container" style="margin-top:50px;">    
       <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
       <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed:</p> <span id="date_executed"></span>
@@ -82,7 +82,7 @@
             var id = url.substring(start);
             return id;
         }
-    // window.onLoad = getUrl(); https://interceptorpnp.000webhostapp.com/
+    
         var oppId = getUrl();
         var target;
   

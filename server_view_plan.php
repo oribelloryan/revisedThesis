@@ -112,10 +112,10 @@ function dateDifference($date1, $date2){
      echo '<a href="#" onClick="pressed('.$id.');"><tr>';
              echo "<td>" .$id."</td>";
              echo "<td>" .$result['operation_name']."</td>";
-             echo "<td><p>" .dateformatting($result['date_plan'])."</p></td>";
-             echo "<td><p>" .dateformatting($result['date_execute'])."</p></td>";
-     $neg = abs($diff);
-            echo "<td><p> $neg</p></td>";
+             echo "<td>" .dateformatting($result['date_plan'])."</td>";
+             echo "<td>" .dateformatting($result['date_execute'])."</td>";
+             $neg = abs($diff);
+            echo "<td> $neg </td>";
      echo "</tr></a>";
     }
     ?>
@@ -138,6 +138,10 @@ function dateDifference($date1, $date2){
        $('#datatable tbody').on( 'click', 'td', function () {
           var id = table.row( this ).data()[0];
           var operation = table.row( this ).data()[1];
+          var today = table.row( this ).data()[4];
+          if(today > 0){
+                swal("Operation can't be viewed", "Operation is not available for viewing", "error");
+          }else{
                 swal({
                       title: "You are to proceed in the operation "+operation+"?",
                       text: "",
@@ -148,12 +152,13 @@ function dateDifference($date1, $date2){
                       cancelButtonText: "Cancel",
                       closeOnConfirm: false,
                       closeOnCancel: true
-                    },
-                    function(isConfirm){
+                    }, function(isConfirm){
                       if (isConfirm){
                          window.location.href = "server_renderingMap.php?operation_id=" + id;
                       } 
                     });
+                   
+               }
                   });
                   });
     </script>
