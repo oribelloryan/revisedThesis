@@ -757,7 +757,7 @@
           },
           success: function(e){
             alert(e);
-            e.style.visibility = 'visible'
+            e.style.visibility = 'hidden'
           // updateSaveMarker();
           }
         });
