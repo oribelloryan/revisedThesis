@@ -7,14 +7,19 @@ header('Access-Control-Allow-Origin: *');
 	$lng = $_POST['lng'];
 	$date = $_POST['date'];
 	$counter = $_POST['counter'];
+	$id = $_POST['id'];
 	
+	$mission = $conn->query("SELECT * FROM tbl_operations WHERE operation_id = '$id'");
+	$row = $mission->fetch(PDO::FETCH_ASSOC);
+	$done = $row['mission_status'];
 
-	$stmt = $conn->prepare("SELECT * FROM checkpoints WHERE name = :name");
+	$stmt = $conn->prepare("SELECT * FROM checkpoints WHERE name = :name AND operation_id = :id");
 	$stmt->bindValue(':name', $name);
+	$stmt->bindValue(':id', $id);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 	$id = $result['id'];
-	echo $id;
+	// echo $id;
 
 	$loc = $conn->prepare("SELECT * FROM on_going_operation WHERE checkpoint_id = :id");
 	$loc->bindValue(':id', $id);
@@ -28,10 +33,8 @@ header('Access-Control-Allow-Origin: *');
 		$location->bindValue(':che', $id);
 		$location->bindValue(':ti', $date );
 		$location->bindValue(':co', $counter);
-		$location->execute();	
-	
-		
-		echo "Updated";
+		$location->execute();			
+		echo $done;
 	
 	}else{
 		$breached = 'no';
@@ -41,7 +44,7 @@ header('Access-Control-Allow-Origin: *');
 		$insert->execute();
 	}
 	}else{
-		echo "You're not part of the team";
+		echo $done;
 	}
 	
 ?>

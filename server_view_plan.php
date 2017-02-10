@@ -25,7 +25,6 @@ function dateDifference($date1, $date2){
     return array("#FBBDBC", $diff); // red
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -93,7 +92,7 @@ function dateDifference($date1, $date2){
     <br>
     <br>
     <div class="row">
-    <!--<?php echo "<center><h4 style='color:#317fba;'>".$today."</h4></center>"; ?>-->
+    <?php echo "<center><h4 style='color:#317fba;'>".$today."</h4></center>"; ?>
     <center><h4 style="color:#317fba;">Planned Operations</h4></center>
     <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="95%">
     <thead>
@@ -139,7 +138,7 @@ function dateDifference($date1, $date2){
           var id = table.row( this ).data()[0];
           var operation = table.row( this ).data()[1];
           var today = table.row( this ).data()[4];
-          if(today > 0){
+          if(today !== 0){
                 swal("Operation can't be viewed", "Operation is not available for viewing", "error");
           }else{
                 swal({

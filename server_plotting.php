@@ -218,26 +218,32 @@
         if(ofPerimeter){
          var image = {
           url: 'images/baricade2.png', // image is 512 x 512
-          scaledSize: new google.maps.Size(28, 28), // scaled size
-            origin: new google.maps.Point(0,0), // origin
-            anchor: new google.maps.Point(0, 0)  
 
+          scaledSize: new google.maps.Size(28,28), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(14,28),
+            // size: new google.maps.Size(100,100)  
         }; 
         var posTarget = pos.lat+','+pos.lng;
         targetAddress(posTarget, function(e){
+
          var targetMarker = new google.maps.Marker({
              position: pos,
              icon: image,
              map: map,
-             id: posTarget
+             id: posTarget,
+             location: e
          });
+
          var contentString = "<div>"+
          "<p>Location Address: "+e+"</p>"+
          '<input type="button" class="deleteMarker" data-value="'+posTarget+'" onClick="deleteMarker(this)" value="DELETE MARKER"/>'+
          "</div>";
+
          var infowindow = new google.maps.InfoWindow();
          google.maps.event.addListener(targetMarker, 'click', function() {
                 infowindow.setContent(contentString);
+                // infowindow.setPosition(new google.maps.LatLng(pos.lat - 0.1, pos.lng - 0.1));
                 infowindow.open(map, targetMarker); // click on marker opens info window
 
         });
@@ -267,8 +273,21 @@
     }
 
     function deleteMarker(e){
-      var x = confirm('Are you sure to delete this checkpoint?');
-      if(x){
+      // var x = confirm('Are you sure to delete this checkpoint?');
+      // if(x){
+     swal({
+          title: "Are you sure to delete the checkpoint ?",
+          text: "This could not be reverted back",
+          type: "",
+          showCancelButton: true,
+          confirmButtonColor: '#DD6B55',
+          confirmButtonText: 'Yes, delete marker',
+          cancelButtonText: "No",
+          closeOnConfirm: false,
+          closeOnCancel: true
+          },
+      function(isConfirm){
+      if(isConfirm){
       var value = e.getAttribute('data-value');
       console.log(value);
       console.log("pos"+markers[1].get('id'));
@@ -281,11 +300,13 @@
         checkpointsCounterFn();
         }
       }
+      swal("Checkpoint Deleted","","success");
       }
+      });
 
     }
 
-    function addPerimeter(loc){
+    function addPerimeter(loc, address){
        circle = new google.maps.Polygon({
         map: map,
         paths: circlePath(loc , radiusSize, 360),
@@ -310,7 +331,8 @@
              position: loc,
              icon: image,
              map: map,
-             id: markers.length
+             id: markers.length,
+             location: address
          });
 
         markers.push(targetMarker);
@@ -326,7 +348,13 @@
     function getMarkersPosition(){
       var markersPosition = [];
       markers.forEach(function(x, y){
-        markersPosition.push(x.getPosition());
+        var pos = x.getPosition();
+        var obj = {
+          lat: pos.lat(),
+          lng: pos.lng(),
+          location: x.location
+        }
+        markersPosition.push(obj);
       });
       return markersPosition;
     }
@@ -345,16 +373,15 @@
             if(google.maps.geometry.poly.containsLocation(google.maps.geometry.spherical.computeOffset(center,radius,d), boundary)){
               a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
             }else{
-          //     var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
-          //     for (var i = 0; i < boundaries.length; i++) {
-          //     if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
-          //       a.push(boundaries[i]);
-          //       i = boundaries.lenght + 100;
-          //       break;
-          //     }
-          // }
+              // var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
+              // for (var i = 0; i < boundaries.length; i++) {
+              // if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
+              //   a.push(boundaries[i]);
+              //   i = boundaries.lenght + 100;
+              //   break;
+              // }
+           }
          }
-        }
         return a;
       }
 
@@ -498,7 +525,7 @@
                         document.getElementById('targetLabel').innerHTML = back;
                         checkpointSpanVisibility(true);
                         swal("Area Locked", "Targeted Place", "success");
-                        addPerimeter(event.latLng);
+                        addPerimeter(event.latLng, back);
                         perimeterOpen = setPerimeter();
                         if(radiusSize <= 400){
                         map.setCenter(event.latLng);
@@ -581,11 +608,13 @@
                       var msg = JSON.parse(msg);
                      if(msg.status == "ok"){
                        var time = 3;
-                       var timer;
                        setInterval(function(){ 
                         time = time - 1;
                         swal("Success! You'll be redirected in " + time,'', 'success');
-                        if(time < 1){
+                        if(time == 0){
+                          window.location.href = 'server_checkpointLabeling.php?operation_id='+msg.id;
+                        }else if(time < 1){
+                          swal("Please wait for transitioning");
                           window.location.href = 'server_checkpointLabeling.php?operation_id='+msg.id;
                         }
                       }, 1000);

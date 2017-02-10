@@ -147,7 +147,7 @@ function dateDifference($date1, $date2){
                     },
                     function(isConfirm){
                       if (isConfirm){
-                         window.location.href = "server_renderingMap.php?operation_id=" + id;
+                         window.location.href = "server_history_rendering_map.php?operation_id=" + id;
                       } 
                     });
                   });

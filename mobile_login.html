@@ -94,7 +94,7 @@
       checkpoint.focus();
       return false;
       }
-      // 
+      // https://interceptorpnp.000webhostapp.com/
       $.ajax({
         url : "mobile_logging.php",
         type : "POST",
@@ -108,22 +108,24 @@
           var info;
           var today = new Date();
           var execution = new Date(msg.date_execute);
-          console.log(msg);
-          var diff = today - execution ;
-          console.log(diff);
+          console.log(msg.mission_status);
           if(msg == "NoRecord"){
             alert("Invalid Credentials");
           }else{
-            info = 'Operation Id: '+ msg.operation_id +
-            '\nOperation Name: '+ msg.operation_name +
-            '\nDate Planned: '+ msg.date_plan;
-            var x = confirm(info);
-            if(x === true){
-              alert("You will be directed to the operation details");
-              window.location.href = "mobile_index.html?id="+msg.operation_id+"&?name="+checkpoint.value+"#op-map";
-            }else{
-              return false;
-            }
+               if(msg.mission_status == 'finished'){
+                alert("Operation has already lapsed");
+               }else{
+                info = 'Operation Id: '+ msg.operation_id +
+                '\nOperation Name: '+ msg.operation_name +
+                '\nDate Planned: '+ msg.date_plan;
+                var x = confirm(info);
+                if(x === true){
+                  alert("You will be directed to the operation details");
+                  window.location.href = "mobile_index.html?id="+msg.operation_id+"&?name="+checkpoint.value+"#op-map";
+                 }else{
+                return false;
+              }
+           }
           }
         },
         error : function(e, x, settings, exception) {

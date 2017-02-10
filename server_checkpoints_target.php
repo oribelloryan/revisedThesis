@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 require("db_conn.php");
 
 $id = $_GET["id"];

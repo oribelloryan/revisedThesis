@@ -54,6 +54,7 @@
     <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed: </p><span id="date_executed"></span>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoint(s): </p><p id="num_officers" style="margin-bottom:20px;"></p>
+    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Target Location: </p><p id="location" style="margin-bottom:20px;"></p>
     <div id="map" ></div>
     <div id="formradius">
     <!-- <input type="number" id="radiussize"> -->
@@ -67,6 +68,10 @@
     var checkpointMarkers = [];
     var breachedSize = 0;
     var breachedArray = [];
+    var password;
+    var operationName;
+    var markers = [];
+    var complete = 'not complete';
     // var breachedPoint = {
     //   lat: undefined, 
     //   lng: undefined,
@@ -101,8 +106,12 @@
           document.getElementById('operation_name').innerHTML = parsed.name;
           document.getElementById('date_executed').innerHTML = parsed.date_execute;
           document.getElementById('num_officers').innerHTML = parsed.officers;
+          document.getElementById('location').innerHTML = parsed.location;
+          password = parsed.password;
+          operationName = parsed.name;
         }
         });
+
     var minZoomLevel = 15;
     var centeroftheearth = {lat: 14.600353, lng: 121.036745};    
     var map;
@@ -122,13 +131,69 @@
            closeOnConfirm: false,
            closeOnCancel: true
           }, function(isConfirm){
+
             if (isConfirm){
-            swal("bye", "bye", "success");
+              swal({
+                title: "Operation Name Input",
+                text: "Please provide the operation name",
+                type: "input",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                animation: "slide-from-top",
+                confirmButtonColor: '#DD6B55',
+                inputPlaceholder: "Operation Name"
+              },
+              function(inputValue){
+                if (inputValue === false) return false;
+  
+                if (inputValue === "") {
+                  swal.showInputError("Please provide the operation name");
+                  return false;
+                }else if(inputValue === operationName){
+                  MissionEnd();
+                }else{
+                  swal("Wrong operation name", "", "error");
+                }
+              });
             } 
         });
 
     });
 
+    function MissionEnd(){
+       swal({
+            title: "Request to end operation",
+            text: "Submit to send end operation request",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            confirmButtonColor: '#DD6B55',
+            showLoaderOnConfirm: true,
+                 },
+            function(e){
+              console.log("e"+e);
+              var setTimer = setInterval(function(){
+                 $.ajax({
+                  url: "server_mission_complete.php",
+                  type: "POST",
+                  data:{
+                    id: oppId
+                  },
+                  success: function(msg){
+                      swal(msg);
+                      clearInterval(setTimer);
+                      complete = 'complete';
+                  },
+                  error: function(){  
+                    swal("Error in sending request","","error");
+                     clearInterval(setTimer);
+                  }
+                 });
+                 
+              }, 1000)
+            });
+    }
+    
     function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
     zoom: minZoomLevel,
@@ -148,6 +213,11 @@
 
     boundaryLine.setMap(map);
 
+    var infoWindow = new google.maps.InfoWindow();
+
+     google.maps.event.addListener(map, 'rightclick', function(event){
+          snapToRoad(event.latLng);
+        });
     // https://interceptorpnp.000webhostapp.com/
 
     downloadUrl('mobile_target_marker.php/?id='+getUrl(), function(data) {
@@ -164,10 +234,11 @@
               // console.log(point);
              
               perimeter(point, radiusSize, map);
-
-              var text = document.createElement('text');
-              text.textContent = name
-              infowincontent.appendChild(text);
+              map.setCenter(point);
+              map.setZoom(17);
+              // var text = document.createElement('text');
+              // text.textContent = name
+              // infowincontent.appendChild(text);
               var image = {
                   url: 'images/crosshair.png',
            // size: new google.maps.Size(71, 71),
@@ -181,10 +252,10 @@
                 map: map,
               });
 
-              targetMarker.addListener('click', function() {
-                infoWindow.setContent(infowincontent);
-                infoWindow.open(map, marker);
-              });
+              // targetMarker.addListener('click', function() {
+              //   infoWindow.setContent(infowincontent);
+              //   infoWindow.open(map, marker);
+              // });
             });
           });
     // https://interceptorpnp.000webhostapp.com/
@@ -222,9 +293,27 @@
                 position: point,
                 name: name
               });
-               pushMarker(checkpointMarkers, marker, function(){
 
-               });
+            var policeMarkerImage = {
+                  url: 'images/policecap.png',
+           // size: new google.maps.Size(71, 71),
+                  anchor: new google.maps.Point(10, 10),
+                  scaledSize: new google.maps.Size(40, 40)
+               };
+
+            var policeMarker = new google.maps.Marker({
+                position: point,
+                icon: policeMarkerImage,
+                // map: map,
+                name: name
+              });
+
+            policeMarkers.push(policeMarker);
+            checkpointMarkers.push(marker);
+               // pushMarker(checkpointMarkers, marker, function(){
+
+               // });
+
                 google.maps.event.addListener(marker, 'click', (function(marker, infowincontent) {
                   return function(){
                   infoWindow.setContent(infowincontent);
@@ -235,56 +324,52 @@
             // console.log(xml);
           });
 
-    
+
+
     setInterval(function(){
-    downloadUrl('server_tracking.php/?id='+getUrl(), function(data) {
+    downloadUrl('server_tracking.php/?id='+getUrl()+'&?name='+operationName, function(data) {
           // console.log(data);
            var dataPass = JSON.parse(data.response);
          
           for (var i = 0; i < dataPass.polices.length; i++) {
           var counter = dataPass.polices[i];
-           // console.log(counter.counter_name);
+          
+          for(var x = 0; x < policeMarkers.length; x++){
+
+          if(policeMarkers[x].name == counter.name){
+             // console.log(policeMarkers[x].name);
           var point = {
             lat: counter.lat * 1,
             lng: counter.lng * 1
           };
-
-          var image = {
-                  url: 'images/policecap.png',
-           // size: new google.maps.Size(71, 71),
-                  anchor: new google.maps.Point(10, 10),
-                  scaledSize: new google.maps.Size(40, 40)
-               };
-            var policeMarker = new google.maps.Marker({
-                position: point,
-                icon: image,
-                map: map,
-                name: counter.name
-              });
-            
-              // pushMarker(policeMarkers, policeMarker, function(){
-              //    directionService(new google.maps.LatLng(policeMarkers.position), new google.maps.LatLng( checkpointMarkers.position));
-              // });
-              google.maps.event.addListener(marker, 'click', (function(marker, infowincontent) {
-                  return function(){
-                  infoWindow.setContent(infowincontent);
-                  infoWindow.open(map, marker);
-                }
-              })(policeMarker, infowincontent));
-          }
-          // console.log(dataPass);
+          policeMarkers[x].setPosition(point);
+          policeMarkers[x].setMap(map);
+          
+          
+        //       var infoWindow = google.maps.InfoWindow();
+        //       var pointFormatted = point.lat+','+point.lng;
+        //       createMarker(policeMarker, counter.name, infoWindow);
+        //       markerAddress(pointFormatted, function(e){
            
+        //       pushMarker(policeMarkers, policeMarker, function(){
+        //          directionService(new google.maps.LatLng(policeMarkers.position), new google.maps.LatLng( checkpointMarkers.position));
+        //       });
+            
+
+        //     }
+          
+        // }
+        //   // console.log(dataPass);
+           }
+        }
+      }
         });
-    },1000);
-      
-       for( var i = 0; i < policeMarkers.length; i++){
-        console.log(policeMarkers[i]);
-       }
+    },5000);
       
         setInterval(function(){
             downloadUrl('server_breached.php/?id='+getUrl(), function(data) {
               var dataPass = JSON.parse(data.response);
-              console.log(dataPass);
+              // console.log(dataPass);
               for (var i = 0; i < dataPass.breached.length; i++) {
               var breached = dataPass.breached[i];
               var point = {
@@ -294,16 +379,17 @@
 
               if(breached.breached === 'yes'){
               swal('Breached', "At " + breached.name, 'warning');
-              var cityCircle = new google.maps.Circle({
-                   strokeColor: '#FF0000',
-                   strokeOpacity: 0.8,
-                   strokeWeight: 1,
-                   fillColor: '#FF0000',
-                   fillOpacity: 0.02,
-                   map: map,
-                   center: point,
-                   radius: radiusSize * 1
-                });
+              // var cityCircle = new google.maps.Circle({
+              //      strokeColor: '#FF0000',
+              //      strokeOpacity: 0.8,
+              //      strokeWeight: 1,
+              //      fillColor: '#FF0000',
+              //      fillOpacity: 0.02,
+              //      map: map,
+              //      center: point,
+              //      radius: radiusSize * 1
+              //   }); 
+              perimeterBreached(new google.maps.LatLng(point), radiusSize * 1, map);
 
               var image = {
                   url: 'images/barricade_breached.png',
@@ -326,6 +412,46 @@
             }
             });
         }, 3000);
+
+        setInterval(function(){
+          var x,y;
+          if(directionService != 'complete'){
+          for(x = 0; x < policeMarkers.length; x++){
+            for(y = 0; y < checkpointMarkers.length; y++){
+              // console.log("here");
+              // console.log(checkpointMarkers[y].name);
+              if(policeMarkers[x].name === checkpointMarkers[y].name){
+              directionService(policeMarkers[x].getPosition(), checkpointMarkers[y].getPosition(), x);
+            }
+            }
+          }
+        }
+        },5000);
+
+      }
+
+      //    function showPolice(){
+      //     // console.log(policeMarkers);
+      //     // // policeMarkers[0].setMap(map);
+      //     // console.log(map);
+      //     var i;
+      //  for(i = 0; i < policeMarkers.length; i++){
+      //     // console.log("show");
+      //    policeMarkers[i].setMap(map);
+      //  }
+      // }
+
+      function createMarker(marker, loc, infowindow){
+      console.log(counter.name);
+        var contentString = "<div>"+
+            "<p>Location Address: "+loc+"</p>"+
+            "</div>";
+
+             
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent(contentString);
+            infowindow.open(map, marker); // click on marker opens info window
+            });
       }
 
       function downloadUrl(url, callback) {
@@ -346,8 +472,53 @@
 
       function doNothing() {}
 
-     
-  
+        function markerAddress(e, callback){
+      var value;
+       $.ajax({
+           type: "GET",
+           url: " https://maps.googleapis.com/maps/api/geocode/json?latlng="+e+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI",
+           success: function(msg){
+             value = msg.results[0].formatted_address;
+             callback(value);
+           }
+           
+       });
+    }
+        
+     function deleteMarker(e){
+      // var x = confirm('Are you sure to delete this checkpoint?');
+      // if(x){
+     swal({
+          title: "Are you sure to delete the checkpoint ?",
+          text: "This could not be reverted back",
+          type: "",
+          showCancelButton: true,
+          confirmButtonColor: '#DD6B55',
+          confirmButtonText: 'Yes, delete marker',
+          cancelButtonText: "No",
+          closeOnConfirm: false,
+          closeOnCancel: true
+          },
+      function(isConfirm){
+      if(isConfirm){
+      var value = e.getAttribute('data-value');
+      // console.log(value);
+      // console.log("pos"+markers[1].get('id'));
+      var i;
+      for(i = 0; i < markers.length; i++){
+        // console.log(markers[i].get('id'));
+        if(markers[i].get('id') == value){
+        markers[i].setMap(null);
+        markers.splice(i,1);
+        swal("Checkpoint Deleted","","success");
+        }
+      }
+      
+      }
+      });
+
+    }
+
        function perimeter(loc, size, map){
         circle = new google.maps.Polygon({
         map: map,
@@ -363,6 +534,22 @@
         circle.setMap(map);
       }
 
+        function perimeterBreached(loc, size, map){
+        newCircle = new google.maps.Polygon({
+        map: map,
+        paths: circlePath(loc, size, 360),
+        center: loc,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.35,
+        strokeWeight: 2,
+        clickable: false,
+        fillColor: '#FF0000',
+        fillOpacity: 0.05,
+      });
+        newCircle.setMap(map);
+      }
+
+
        function circlePath(center,radius,points){
         var a=[],p=360/points,d=0;
         for(var i=0;i<points;++i,d+=p){
@@ -371,13 +558,24 @@
         return a;
       }
 
-    function directionService(origin, destination){
+      function directionService(origin, destination, index){
+        var color = ['gold', 'blue', 'green', 'yellow', 'red', 'pink', 'purple', 'gold', 'green'];
         var directionsService = new google.maps.DirectionsService;
         var directionsDisplay = new google.maps.DirectionsRenderer({
-          draggable: true,
+          draggable: false,
           map: map,
-          panel: document.getElementById('right-panel')
+          // panel: document.getElementById('right-panel')
         });
+        directionsDisplay.setMap(map);
+        directionsDisplay.setOptions( { 
+          polylineOptions: {
+            strokeWeight: 4,
+            strokeOpacity: 1,
+            strokeColor:  color[index]
+        },
+          suppressMarkers: true,
+          preserveViewport: true,
+          routeIndex: 5 } );
 
         directionsDisplay.addListener('directions_changed', function() {
           computeTotalDistance(directionsDisplay.getDirections());
@@ -392,14 +590,14 @@
           origin: origin,
           destination: destination,
           travelMode: 'DRIVING',
-          avoidTolls: true,
-          optimizeWaypoints: false,
-          provideRouteAlternatives: false,
+          avoidTolls: false,
+          optimizeWaypoints: true,
+          provideRouteAlternatives: true,
         }, function(response, status) {
           if(status === 'OK') {
             display.setDirections(response);
           } else {
-            alert('Could not display directions due to: ' + status);
+            // alert('Could not display directions due to: ' + status);
           }
         });
     }
@@ -411,13 +609,168 @@
           total += myroute.legs[i].distance.value;
         }
         total = total / 1000;
-        document.getElementById('total').innerHTML = total + ' km';
+        distanceBetween = total;
+        // alert(total);
+        // document.getElementById('total').innerHTML = total + ' km';
       }
 
       function pushMarker(array, data, callback){
           array.push(data);
        
       }
+
+       function locationPass(e){
+      var data = e.lat()+','+e.lng();
+      return data;
+    }
+
+       function snapToRoad(data){
+      var latitude, longitude;
+      var dot = locationPass(data);
+      
+      $.ajax({ 
+        url : "https://roads.googleapis.com/v1/nearestRoads?points="+dot+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI",
+        type: "GET",
+        beforeSend: function(){
+            $("body").addClass("loading");
+        },
+        success: function( msg ) {
+        latitude = msg.snappedPoints[0].location.latitude;
+        longitude = msg.snappedPoints[0].location.longitude;
+        var pos = {
+          lat: latitude,
+          lng: longitude
+        };
+        var ofPerimeter = google.maps.geometry.poly.containsLocation(new google.maps.LatLng(pos), newCircle);
+
+        if(ofPerimeter){
+         var image = {
+          url: 'images/barricade_breached.png', // image is 512 x 512
+
+          scaledSize: new google.maps.Size(28,28), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(14,28),
+            // size: new google.maps.Size(100,100)  
+        }; 
+        var posTarget = pos.lat+','+pos.lng;
+        targetAddress(posTarget, function(e){
+
+         var targetMarker = new google.maps.Marker({
+             position: pos,
+             icon: image,
+             map: map,
+             id: posTarget,
+             location: e
+         });
+
+         var contentString = "<div>"+
+         "<p>Location Address: "+e+"</p>"+
+         '<input type="button" class="deleteMarker" data-value="'+posTarget+'" onClick="deleteMarker(this)" value="DELETE MARKER"/>'+
+         '<input type="button" class="saveMarker" data-value="'+posTarget+'" onClick="saveMarker(this)" value="SAVE MARKER"/>'+
+         "</div>";
+
+         var infowindow = new google.maps.InfoWindow();
+         google.maps.event.addListener(targetMarker, 'click', function() {
+                infowindow.setContent(contentString);
+                // infowindow.setPosition(new google.maps.LatLng(pos.lat - 0.1, pos.lng - 0.1));
+                infowindow.open(map, targetMarker); // click on marker opens info window
+
+        });
+         
+          targetMarker.setAnimation(google.maps.Animation.DROP);
+          targetMarker.setMap(map);
+          markers.push(targetMarker);
+           });
+          }else{
+            swal('Sorry', 'The targeted road is not within the perimeter', 'warning');
+          }
+         },
+         complete: function(){
+            $("body").removeClass("loading");
+         }
+        });
+       
+      
+    }
+      function updateSaveMarker(){
+        $.ajax({
+          url: "server_saving_breached.php",
+          type: "POST",
+          data:{
+            src: "update",
+            id: oppId
+          },
+          success: function(e){
+            alert(e);
+          }
+        });
+
+      }
+
+      function targetAddress(e, callback){
+      var value;
+       $.ajax({
+           type: "GET",
+           url: " https://maps.googleapis.com/maps/api/geocode/json?latlng="+e+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI",
+           beforeSend: function(){
+            $("body").addClass("loading");
+            },
+           success: function(msg){
+             value = msg.results[0].formatted_address;
+             callback(value);
+           },
+           complete: function(){
+            $("body").removeClass("loading");
+           }
+       });
+    }
+
+    function saveMarker(e){
+     swal({
+          title: "Are you sure to save this marker ?",
+          text: "This would be seen by the deployed police",
+          type: "",
+          showCancelButton: true,
+          confirmButtonColor: '#DD6B55',
+          confirmButtonText: 'Save',
+          cancelButtonText: "No",
+          closeOnConfirm: false,
+          closeOnCancel: true
+          },
+      function(isConfirm){
+      if(isConfirm){
+      var value = e.getAttribute('data-value');
+      // console.log(value);
+      var i;
+      for(i = 0; i < markers.length; i++){
+        if(markers[i].get('id') == value){
+        console.log(markers[i].position.lat());
+        $.ajax({
+          url: "server_saving_breached.php",
+          type: "post",
+          data:{
+            id: oppId,
+            lat: markers[i].position.lat(),
+            lng: markers[i].position.lng(),
+            name: 'breached_checkpoint',
+            src: 'save'
+          },
+          success: function(e){
+            alert(e);
+            e.style.visibility = 'visible'
+          // updateSaveMarker();
+          }
+        });
+        swal("Checkpoint Save","","success");
+        }
+      }
+      
+      }
+      });
+    }
+
+
+
      </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1SFa75QzMfOtf7rudCh6RFgaNk6ptbzo&libraries=geometry&callback=initMap">

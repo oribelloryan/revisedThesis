@@ -66,16 +66,14 @@
       <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
       <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed:</p> <span id="date_executed"></span>
       <p id = 'checkpointSpan' style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoints:</p> <p id="num_officers" style="margin-bottom:20px;"></p>
+      <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Target Location: </p><p id="location" style="margin-bottom:20px;"></p>
       <div id="map" ></div>
-      <div id="formradius">
-        <input type="number" id="radiussize">
-        <button onClick="release()">Coordinates</button>
-      </div>
     </div><!-- /.container -->
     <script src="js/boundary.js"></script>
     <script type="text/javascript">
         var markers = [];
         var radiusSize = 0;
+        var boundary;
         function getUrl(){
             var url = window.location.href;
             var start = url.indexOf('=')+1;
@@ -99,6 +97,7 @@
                 document.getElementById('operation_name').innerHTML = parsed.name;
                 document.getElementById('date_executed').innerHTML = parsed.date_execute;
                 document.getElementById('num_officers').innerHTML = parsed.officers;
+                document.getElementById('location').innerHTML = parsed.location;
             }
         });
         var minZoomLevel = 15;
@@ -113,7 +112,7 @@
                 mapTypeId: 'roadmap'
             });
 
-            var boundary = new google.maps.Polygon({paths: boundaries});
+            // var boundary = new google.maps.Polygon({paths: boundaries});
     
             var boundaryLine = new google.maps.Polyline({
                 path: boundaries,
@@ -123,6 +122,7 @@
                 strokeWeight: 2
             });
 
+            boundary = new google.maps.Polygon({paths: boundaries});
             boundaryLine.setMap(map);
     // https://interceptorpnp.000webhostapp.com/
             var infoWindow = new google.maps.InfoWindow();
@@ -145,6 +145,9 @@
                     infowincontent.appendChild(document.createElement('br'));
 
                     perimeter(point, map);
+
+                    map.setCenter(point);
+                    map.setZoom(17);
 
                     var text = document.createElement('text');
                     text.textContent = name
@@ -170,7 +173,7 @@
             });
     // https://interceptorpnp.000webhostapp.com/
             downloadUrlCheck('server_checkpoints_target.php/?id='+getUrl(), function(data) {
-          
+            // console.log(data);
                 var dataPass = JSON.parse(data);
                 for (var i = 0; i < dataPass.checkpoints.length; i++) {
                     var counter = dataPass.checkpoints[i];
@@ -179,7 +182,9 @@
                         lat: counter.lat * 1,
                         lng: counter.lng * 1
                     };
-                    createMarker(counter.id, point, infoWindow, counter.name, map);
+                    var location = counter.location;
+
+                    createMarker(counter.id, point, infoWindow, counter.name, map, location);
                 }
            
         });
@@ -206,30 +211,42 @@
             }
       });
       }
-
-      function createMarker(checkpointId, point, infoWindow, name, map){
+      var index = 1;
+      function createMarker(checkpointId, point, infoWindow, name, map, loc){
         var contentString;
-       
+        var defaultName = "chcpt"+index;
           if(name === ''){
            contentString = $('<div class="marker-info-win">'+
           '<div class="marker-inner-win"><span class="info-content">'+
-          '<h4 class="marker-heading">'+checkpointId+'</h4>'+ 
-          '<input type="text" class="checkpointLabel" name="checkpointLabel">'+
-          '</span><button name="save-marker" class="save-marker" title="Save Name">Save Label</button>'+
+          '<h6 class="marker-heading">Location: '+loc+'</h6>'+
+          '<h6 class="marker-heading">'+checkpointId+'</h6>'+ 
+          '<input type="text" class="checkpointLabel" name="checkpointLabel" placeholder='+defaultName+'>'+
+          '<button name="save-marker" class="save-marker" title="Save Name">Save Label</button>'+
+          '<input type="checkbox" name="defaultName" class="defaultNameCheckbox" value="'+defaultName+'">Use default name<br></span>'+
           '</div></div>');    
           }else{
           contentString = $('<div class="marker-info-win">'+
           '<div class="marker-inner-win"><span class="info-content">'+
+          '<h4 class="marker-heading">Location:'+loc+'</h4>'+
           '<h4 class="marker-heading">'+checkpointId+'</h4>'+ 
-          '<h5>Name: '+name+'</h5>'+
+          '<h6>Name: '+name+'</h6>'+
           '</span>'+
           '</div></div>');    
-          }
+          }   
+           var image = {
+          url: 'images/baricade2.png', // image is 512 x 512
+
+          scaledSize: new google.maps.Size(27,27), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(14,28),
+            // size: new google.maps.Size(100,100)  
+        }; 
               var marker = new google.maps.Marker({
                 map: map,
                 id: checkpointId,
                 name: name,
-                position: point
+                position: point,
+                icon: image
               });
 
               markers.push(marker);
@@ -243,9 +260,23 @@
 
                 google.maps.event.addDomListener(saveBtn, "click", function(event){
                 var value = contentString.find('.checkpointLabel')[0];
-                 console.log(saveBtn);
-                 console.log(value);
-                 console.log(marker.name);
+                var defaultNameValue = contentString.find('.defaultNameCheckbox')[0];
+                var checked = defaultNameValue.checked;
+                if(checked){
+                   updateLabel(checkpointId, defaultNameValue.value, function(e){
+                   console.log(e);
+                     contentString = $('<div class="marker-info-win">'+
+                       '<div class="marker-inner-win"><span class="info-content">'+
+                       '<h4 class="marker-heading">'+checkpointId+'</h4>'+ 
+                       '<h5>Name: '+e.name+'</h5>'+
+                       '</span>'+
+                       '</div></div>');
+                   infoWindow.setContent(contentString[0]);
+                   infoWindow.open(map, marker);
+                   swal("Checkpoint Name Set Default", "","success");
+                });
+                }
+                else{
                 if(value.value === ''){
                 swal("Please provide checkpoint name");
                 }else{
@@ -259,14 +290,14 @@
                        '</div></div>');
                    infoWindow.setContent(contentString[0]);
                    infoWindow.open(map, marker);
-                   swal("Name Added");
+                   swal("Name Added", "","success");
                    // location.reload();
                 });
                 }
-               });
-              }else{
-
               }
+               });
+              }
+              index++;
       }
 
        function downloadUrlCheck(url, callback) {
@@ -312,10 +343,21 @@
         circle.setMap(map);
       }
 
-       function circlePath(center,radius,points){
+        function circlePath(center,radius,points){
         var a=[],p=360/points,d=0;
         for(var i=0;i<points;++i,d+=p){
-            a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
+            if(google.maps.geometry.poly.containsLocation(google.maps.geometry.spherical.computeOffset(center,radius,d), boundary)){
+              a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
+            }else{
+          //     var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
+          //     for (var i = 0; i < boundaries.length; i++) {
+          //     if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
+          //       a.push(boundaries[i]);
+          //       i = boundaries.lenght + 100;
+          //       break;
+          //     }
+          // }
+         }
         }
         return a;
       }

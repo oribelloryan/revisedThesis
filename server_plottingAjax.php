@@ -24,11 +24,12 @@ foreach($markers as $markerObject){
 		
 		$lat = $markerObject->lat;
 		$lng = $markerObject->lng;
+		$loc = $markerObject->location;
 		if($counter < 1){
 			$counter++;
-			$conn->query("INSERT INTO target(operation_id, lat, lng, radius) VALUES ('$id', '$lat', '$lng', '$r')");
+			$conn->query("INSERT INTO target(operation_id, lat, lng, radius, location) VALUES ('$id', '$lat', '$lng', '$r', '$loc')");
 		}else{
-			$conn->query("INSERT INTO checkpoints(operation_id, lat, lng) VALUES ('$id', '$lat', '$lng')");
+			$conn->query("INSERT INTO checkpoints(operation_id, lat, lng, location) VALUES ('$id', '$lat', '$lng', '$loc')");
 		}
 }
 

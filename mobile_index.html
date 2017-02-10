@@ -132,6 +132,7 @@
 <script src="js/boundary.js"></script>
  <script type="text/javascript">
   var breachedArray = [];
+  var newBreachedArray = [];
   var distanceBetween;
 
   function getUrl(data, last){
@@ -320,8 +321,6 @@
               });
             });
           });
-            console.log("check"+checkpointAddress);
-            console.log("loc"+locationAddress);
            
      // var breachedFn = setInterval(function(){
      //               }, 3000);
@@ -329,7 +328,7 @@
 
 
        var intervalCounter = 0;
-       setInterval(function(){
+      var intervalStorage = setInterval(function(){
          var now = new Date();
          $.ajax({
                type: "POST",
@@ -339,21 +338,33 @@
                   lat: locationLat,
                   lng: locationLng,
                   date: now,
-                  counter: intervalCounter
+                  counter: intervalCounter,
+                  id: oppId,
                },
                success: function(msg){
-                // console.log(msg);
+                console.log(msg);
+                if(msg == 'finished'){
+                  alert("Mission Complete");
+                  clearInterval(otherMobileFunction);
+                     setTimeout(function() {
+                  missionComplete(status, function(e){
+                          window.location = "index.html";
+                      });
+                  }, 2000);
+                }
                }
             });
          intervalCounter++;
          downloadUrl('mobile_breachedUpdating.php/?id='+oppId, function(data) {
               var dataPass = JSON.parse(data.response);
-              console.log(dataPass);
+              // console.log("breached");
+              // console.log(dataPass);
               for (var i = 0; i < dataPass.breached.length; i++) {
-                var id = dataPass.breached[i].id
-                var breachedId = breachedArray.indexOf(id);
-                     if( breachedId == -1){
 
+                var id = dataPass.breached[i].id;
+                var breachedId = breachedArray.indexOf(id); 
+
+                     if( breachedId == -1){
                           var breached = dataPass.breached[i];
                           var point = {
                               lat: breached.lat * 1,
@@ -388,15 +399,49 @@
                           map.setCenter(point);
                           map.setZoom(18);
                       }
-                       
-              
-                // clearInterval(breachedFn);
             }
             });
+         
+         downloadUrl('mobile_breachedUpdatingNodes.php?id='+oppId, function(data) {
+              var dataPass = JSON.parse(data.response);
+              console.log("newbreached");
+              console.log(dataPass.newBreached);
+              for (var i = 0; i < dataPass.newBreached.length; i++) {
+
+                var id = dataPass.newBreached[i].id;
+                var breachedId = newBreachedArray.indexOf(id); 
+
+                     if( breachedId == -1){
+                          var breached = dataPass.newBreached[i];
+                          var point = {
+                              lat: breached.lat * 1,
+                              lng: breached.lng * 1
+                          };
+              
+                          alert('Breached At '+ breached.name);
+
+                          var imageBreached = {
+                              url: 'images/barricade_breached.png',
+                              anchor: new google.maps.Point(10, 10),
+                              scaledSize: new google.maps.Size(25, 25)
+                          };
+
+                          var breachedMarker = new google.maps.Marker({
+                              position: point,
+                              icon: imageBreached,
+                              map: map
+                          });
+
+                          newBreachedArray.push(dataPass.newBreached[i].id);
+                      }
+            }
+         });
 
       }, 3000);
        
-
+        function missionComplete(status, callback){
+            callback(clearInterval(intervalStorage));
+        }
         var directionServiceFn = setInterval(function(){
           if(distanceBetween < 0.05){
 
@@ -408,7 +453,7 @@
 
     }
       
-        setInterval(function(){
+      var otherMobileFunction = setInterval(function(){
         $.ajax({
               type: "POST",
               url: "mobile_othersTracking.php",
@@ -417,9 +462,8 @@
                 operation: oppId
               },
               success: function(data){
-                console.log(data);
                 var other = JSON.parse(data);
-                console.log(other);
+                // console.log(other);
                 for (var i = 0; i < other.otherPolice.length; i++) {
                   var counter = other.otherPolice[i];
                   var point = {
@@ -559,7 +603,7 @@
           if(status === 'OK') {
             display.setDirections(response);
           } else {
-            alert('Could not display directions due to: ' + status);
+            // alert('Could not display directions due to: ' + status);
           }
         });
     }

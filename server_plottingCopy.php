@@ -158,30 +158,14 @@
         };
     })(targetMarker, content[0], infoWindow)); 
 
-       // google.maps.event.addListener(targetMarker, 'rightclick', (function(marker, content, infowindow){
-          
-       //    return function(){
-       //    infoWindow.setContent("deletMe");
-       //    infowindow.open(map, marker);
-       //    };
-
-       // })(targetMarker, "deleteContent", deleteWindow));
+     
 
           targetMarker.setAnimation(google.maps.Animation.DROP);
           targetMarker.setMap(map);
           markers.push(targetMarker);
           save.style.visibility = 'visible';
     });
-        // google.maps.event.addListener(marker, 'click', function() {
-        //         infowindow.open(map,marker); // click on marker opens info window 
-        // });
-        
-
-        // //###### remove marker #########/
-        // var removeBtn   = contentString.find('button.remove-marker')[0];
-        // google.maps.event.addDomListener(removeBtn, "click", function(event) {
-        //     targetMarker.setMap(null);
-        // });
+       
        index++;
     }
 
@@ -256,14 +240,14 @@
             if(google.maps.geometry.poly.containsLocation(google.maps.geometry.spherical.computeOffset(center,radius,d), boundary)){
               a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
             }else{
-          //     var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
-          //     for (var i = 0; i < boundaries.length; i++) {
-          //     if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
-          //       a.push(boundaries[i]);
-          //       i = boundaries.lenght + 100;
-          //       break;
-          //     }
-          // }
+              var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
+              for (var i = 0; i < boundaries.length; i++) {
+              if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
+                a.push(boundaries[i]);
+                i = boundaries.lenght + 100;
+                break;
+              }
+          }
          }
         }
         return a;
