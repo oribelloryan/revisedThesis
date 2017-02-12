@@ -342,7 +342,7 @@
                   id: oppId,
                },
                success: function(msg){
-                console.log(msg);
+                // console.log(msg);
                 if(msg == 'finished'){
                   alert("Mission Complete");
                   clearInterval(otherMobileFunction);
@@ -404,8 +404,8 @@
          
          downloadUrl('mobile_breachedUpdatingNodes.php?id='+oppId, function(data) {
               var dataPass = JSON.parse(data.response);
-              console.log("newbreached");
-              console.log(dataPass.newBreached);
+              // console.log("newbreached");
+              // console.log(dataPass.newBreached);
               for (var i = 0; i < dataPass.newBreached.length; i++) {
 
                 var id = dataPass.newBreached[i].id;
@@ -430,6 +430,7 @@
                               map: map
                           });
 
+                          var dataAgain = directionService(locationAddress, point, i);
                           newBreachedArray.push(dataPass.newBreached[i].id);
                       }
             }
@@ -444,7 +445,7 @@
           if(distanceBetween < 0.05){
 
           }else{
-          directionService(checkpointAddress, locationAddress);
+          directionService(locationAddress, checkpointAddress);
           // clearInterval(directionServiceFn);
         }
         },5000);
@@ -563,7 +564,8 @@
         return a;
       }
 
-      function directionService(origin, destination){
+      function directionService(origin, destination, index){
+        var color = ['gold', 'blue', 'green', 'yellow', 'red', 'pink', 'purple', 'gold', 'green'];
         var directionsService = new google.maps.DirectionsService;
         var directionsDisplay = new google.maps.DirectionsRenderer({
           draggable: false,
@@ -571,20 +573,19 @@
           // panel: document.getElementById('right-panel')
         });
         directionsDisplay.setMap(map);
-        directionsDisplay.setOptions( { 
+        directionsDisplay.setOptions({ 
           polylineOptions: {
             strokeWeight: 4,
             strokeOpacity: 1,
-            strokeColor:  'green' 
+            strokeColor:  color[index]
         },
           suppressMarkers: true,
           preserveViewport: true,
           routeIndex: 5 } );
 
         directionsDisplay.addListener('directions_changed', function() {
-          computeTotalDistance(directionsDisplay.getDirections());
+          return computeTotalDistance(directionsDisplay.getDirections());
         });
-    
         displayRoute(origin, destination, directionsService,
             directionsDisplay);
     }
@@ -615,7 +616,8 @@
         total = total / 1000;
         distanceBetween = total;
         // alert(total);
-        document.getElementById('total').innerHTML = total + ' km';
+        console.log(total + ' km');
+        return distanceBetween;
       }
   </script>
    <script async defer

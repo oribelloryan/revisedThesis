@@ -86,6 +86,7 @@ function dateDifference($date1, $date2){
     </div>
 
     <div class="container-fluid">
+    <a href="index.php"><img src="images/back.png" style="width:50px;margin-left: 10px" align="right"></a>
     <br>
     <br>
     <div class="row">

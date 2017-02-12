@@ -89,6 +89,8 @@ function dateDifference($date1, $date2){
     </div>
 
     <div class="container-fluid">
+    <a href="index.php"><img src="images/back.png" style="width:50px;" align="right"></a>
+    <br>
     <br>
     <br>
     <div class="row">
@@ -138,9 +140,9 @@ function dateDifference($date1, $date2){
           var id = table.row( this ).data()[0];
           var operation = table.row( this ).data()[1];
           var today = table.row( this ).data()[4];
-          if(today !== 0){
-                swal("Operation can't be viewed", "Operation is not available for viewing", "error");
-          }else{
+          // if(today > 0){
+                // swal("Operation can't be viewed", "Operation is not available for viewing", "error");
+          // }else{
                 swal({
                       title: "You are to proceed in the operation "+operation+"?",
                       text: "",
@@ -157,7 +159,7 @@ function dateDifference($date1, $date2){
                       } 
                     });
                    
-               }
+          //      }
                   });
                   });
     </script>

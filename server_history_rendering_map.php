@@ -44,6 +44,7 @@
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/header.png" style="width:400px;"></center>
     </div>
+    <a href="server_history.php"><img src="images/back.png" style="width:50px;margin-left: 10px" align="right"></a>
     <a href="index.php"><img src="images/home.png" style="width:50px;" align="right"></a>
     <!--  <div id="right-panel">
       <p>Total Distance: <span id="total"></span></p>

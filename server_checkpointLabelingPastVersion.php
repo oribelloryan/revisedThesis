@@ -101,7 +101,6 @@
                 document.getElementById('location').innerHTML = parsed.location;
             }
         });
-        
         var minZoomLevel = 15;
         var centeroftheearth = {lat: 14.600353, lng: 121.036745};    
         var map;
@@ -187,7 +186,6 @@
         });
        google.maps.event.addListener(infoWindow,'closeclick',function(e){
        });
-      
         }
 
       function updateLabel(id, name, callback){
@@ -210,133 +208,112 @@
             }
       });
       }
-        
-
+      var index = 1;
       function createMarker(checkpointId, point, infoWindow, name, map, loc){
-          var contentString;
+        var contentString;
+        var defaultName = "chcpt"+index;
+          if(name === ''){
+           contentString = $('<div class="marker-info-win">'+
+          '<div class="marker-inner-win"><span class="info-content">'+
+          '<h6 class="marker-heading">Location: '+loc+'</h6>'+
+          '<h6 class="marker-heading">'+checkpointId+'</h6>'+ 
+          '<input type="text" class="checkpointLabel" name="checkpointLabel" placeholder='+defaultName+'>'+
+          '<button name="save-marker" class="save-marker" title="Save Name">Save Label</button>'+
+          '<input type="checkbox" name="defaultName" class="defaultNameCheckbox" value="'+defaultName+'">Use default name<br></span>'+
+          '</div></div>');    
+          }else{
           contentString = $('<div class="marker-info-win">'+
           '<div class="marker-inner-win"><span class="info-content">'+
           '<h6 class="marker-heading">Location:'+loc+'</h6>'+
-          '<h6 class="marker-heading-id" value='+checkpointId+'>Checkpoint Id:'+checkpointId+'</h6>'+ 
-          '<div class="marker-data" align="center"><h6 class="editNameTxt">Name: '+name+'</h6><button style="background-color:#bd593d;color:#ffffff;" class="editName">Edit Name</button>'+
-          '</div></span></div></div>');    
-
+          '<h6 class="marker-heading">'+checkpointId+'</h6>'+ 
+          '<h6 class="editName" ondblclick="editNameFn(this)">Name: '+name+'</h6>'+
+          '</span>'+
+          '</div></div>');    
+          }   
            var image = {
-            url: 'images/baricade2.png', // image is 512 x 512
-            scaledSize: new google.maps.Size(27,27), // scaled size
+          url: 'images/baricade2.png', // image is 512 x 512
+
+          scaledSize: new google.maps.Size(27,27), // scaled size
             origin: new google.maps.Point(0,0), // origin
             anchor: new google.maps.Point(14,28),
             // size: new google.maps.Size(100,100)  
-            }; 
-
-            var marker = new google.maps.Marker({
+        }; 
+              var marker = new google.maps.Marker({
                 map: map,
                 id: checkpointId,
                 name: name,
                 position: point,
                 icon: image
-            });
+              });
 
               markers.push(marker);
-            
-              marker.addListener('click', function(){
+              if(openEdit){
+                swal("Cannot Close");
+              }else{
+              marker.addListener('click', function() {
                 infoWindow.setContent(contentString[0]);
                 infoWindow.open(map, marker);
               });
+              }
+             
 
-               var editName = contentString.find('button.editName')[0];
-    
-               google.maps.event.addDomListener(editName, 'click', function(){
-                console.log(contentString);
-                var pastValue = $('.editNameTxt').text().substr(6);
-                var checkpointId = $(".marker-heading-id").attr('value');
-                newContentString = $('<div class="marker-info-win">'+
-              '<div class="marker-inner-win"><span class="info-content">'+
-              '<h6 class="marker-heading-loc">Location:'+loc+'</h6>'+
-              '<h6 class="marker-heading-id" value='+checkpointId+'>Checkpoint Id:'+checkpointId+'</h6>'+ 
-              '<div class="marker-data" align="center">New checkpoint name: '+
-              '<input type="text" placeholder="new checkpoint name" class="newNameTxt"><button style="background-color:#2b3f6d;color:#ffffff;" class="saveBtn">Save</button>'+
-              '<button class="cancelBtn" style="background-color:#bd593d;color:#ffffff;" value='+pastValue+' >Cancel</button>'+
-              '</div></span></div></div>');   
+               var saveBtn = contentString.find('button.save-marker')[0];
+               if(saveBtn !== undefined){
 
-                openEdit = true;
-                infoWindow.setContent(newContentString[0]);
-                infoWindow.open(map, marker);
-               // cancelFn(newContentString, contentString, infoWindow, marker);
-                 var cancelBtn = newContentString.find('button.cancelBtn')[0];
-                google.maps.event.addDomListener(cancelBtn, 'click', function(){
-                  var pastValue = $('cancelBtn').attr('value');
-                  infoWindow.setContent(contentString[0]);
-                  infoWindow.open(map, marker);
+                google.maps.event.addDomListener(saveBtn, "click", function(event){
+                var value = contentString.find('.checkpointLabel')[0];
+                var defaultNameValue = contentString.find('.defaultNameCheckbox')[0];
+                var checked = defaultNameValue.checked;
+                if(checked){
+                   updateLabel(checkpointId, defaultNameValue.value, function(e){
+                   console.log(e);
+                     contentString = $('<div class="marker-info-win">'+
+                       '<div class="marker-inner-win"><span class="info-content">'+
+                       '<h4 class="marker-heading">'+checkpointId+'</h4>'+ 
+                       '<h5>Name: '+e.name+'</h5>'+
+                       '</span>'+
+                       '</div></div>');
+                   infoWindow.setContent(contentString[0]);
+                   infoWindow.open(map, marker);
+                   swal("Checkpoint Name Set Default", "","success");
+                });
+                }
+                else{
+                if(value.value === ''){
+                swal("Please provide checkpoint name");
+                }else{
+                updateLabel(checkpointId, value.value, function(e){
+                   console.log(e);
+                     contentString = $('<div class="marker-info-win">'+
+                       '<div class="marker-inner-win"><span class="info-content">'+
+                       '<h4 class="marker-heading">'+checkpointId+'</h4>'+ 
+                       '<h5>Name: '+e.name+'</h5>'+
+                       '</span>'+
+                       '</div></div>');
+                   infoWindow.setContent(contentString[0]);
+                   infoWindow.open(map, marker);
+                   swal("Name Added", "","success");
+                   // location.reload();
+                });
+                }
+              }
                });
-               // saveNameFn(newContentString, infoWindow, marker, loc, contentString);
-                var saveBtn = newContentString.find('button.saveBtn')[0];
-                var checkpointId = newContentString.find('.marker-heading-id').attr('value');
-                google.maps.event.addDomListener(saveBtn, 'click', function(){
-            var value = newContentString.find('input.newNameTxt')[0].value;
-                          console.log(value);
-                  if(value == ''){
-                    swal("Please provide checkpoint name","","warning");
-                  }else if(value == pastValue){
-                    swal("Named Already");
-                  }else{
-                    console.log(checkpointId);
-                    updateLabel(checkpointId, value, function(e){});
-
-                          swal("Name Updated");
-                         contentString = $('<div class="marker-info-win">'+
-                    '<div class="marker-inner-win"><span class="info-content">'+
-                    '<h6 class="marker-heading">Location:'+loc+'</h6>'+
-                    '<h6 class="marker-heading">Checkpoint Id:'+checkpointId+'</h6>'+ 
-                    '<div class="marker-data" align="center"><h6 class="editNameTxt">Name: '+value+'</h6><button style="background-color:#bd593d;color:#ffffff;" class="editName">Edit Name</button>'+
-                    '</div></span></div></div>');   
-                          infoWindow.setContent(contentString[0]);
-                          infoWindow.open(map, marker);
-                          // createMarker(checkpointId, point, infoWindow, name, map, loc);
-
-                  }
-                    });
-            });
+              }
+              index++;
       }
 
+      function editNameFn(e){
+        openEdit = true;
+        var pastValue = $(e).text().substr(6);
+        console.log(pastValue);
+        $(e).replaceWith("<div class='newNameDiv'><input type='text' placeholder='new checkpoint name'><button>Save</button><button onclick='cancelFn(this)' value="+pastValue+">Cancel</button></div>");
+      }
 
-      function cancelFn(e, content, infoWindow, marker){
+      function cancelFn(e){
         console.log(e);
-          var cancelBtn = e.find('button.cancelBtn')[0];
-                google.maps.event.addDomListener(cancelBtn, 'click', function(){
-                  var pastValue = $(this).attr('value');
-                  infoWindow.setContent(content[0]);
-                  infoWindow.open(map, marker);
-               });
-      
-      }
-
-      function saveNameFn(e, infoWindow, marker, loc, content){
-        var saveBtn = e.find('button.saveBtn')[0];
-        var checkpointId = e.find('.marker-heading-id').attr('value');
-         google.maps.event.addDomListener(saveBtn, 'click', function(){
-            var value = e.find('input.newNameTxt')[0].value;
-                console.log(value);
-        if(value == ''){
-          swal("Please provide checkpoint name","","warning");
-        }else{
-          console.log(checkpointId);
-          updateLabel(checkpointId, value, function(e){
-            if(e == 1){
-               content = $('<div class="marker-info-win">'+
-          '<div class="marker-inner-win"><span class="info-content">'+
-          '<h6 class="marker-heading">Location:'+loc+'</h6>'+
-          '<h6 class="marker-heading">Checkpoint Id:'+checkpointId+'</h6>'+ 
-          '<div class="marker-data" align="center"><h6 class="editNameTxt">Name: '+value+'</h6><button style="background-color:#bd593d;color:#ffffff;" class="editName">Edit Name</button>'+
-          '</div></span></div></div>');    
-                infoWindow.setContent(content[0]);
-                infoWindow.open(map, marker);
-            }else{
-              swal("Error in updating the name","","warning");
-            }
-          });
-        }
-          });
+        var pastValue = $(e).attr('value');
+        console.log(pastValue);
+        $('.newNameDiv').replaceWith("<h6 class='editName' ondblclick='editNameFn(this)'>Name: "+pastValue+"</h6>");
       }
 
        function downloadUrlCheck(url, callback) {

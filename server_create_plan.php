@@ -40,7 +40,7 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/header.png" style="width:400px;"></center>
     </div>
-
+    <a href="index.php"><img src="images/back.png" style="width:50px;" align="right"></a>
     <div class="container">
       <div class="col-lg-6" style="margin-top:-5%;">
         <h1>OPERATION DETAILS</h1>

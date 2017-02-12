@@ -18,7 +18,6 @@ $counter = 0;
 
 $update = "UPDATE tbl_operations SET num_officers = '$c' WHERE operation_id = '$id'";
 $conn->query($update);
-
 foreach($markers as $markerObject){
 	// var_dump($markerObject);
 		
@@ -26,11 +25,13 @@ foreach($markers as $markerObject){
 		$lng = $markerObject->lng;
 		$loc = $markerObject->location;
 		if($counter < 1){
-			$counter++;
+			
 			$conn->query("INSERT INTO target(operation_id, lat, lng, radius, location) VALUES ('$id', '$lat', '$lng', '$r', '$loc')");
 		}else{
-			$conn->query("INSERT INTO checkpoints(operation_id, lat, lng, location) VALUES ('$id', '$lat', '$lng', '$loc')");
+			$name = 'chcpt'.$counter;
+			$conn->query("INSERT INTO checkpoints(operation_id, name, lat, lng, location) VALUES ('$id', '$name','$lat', '$lng', '$loc')");
 		}
+		$counter++;
 }
 
 $response = array("status"=>"ok","id"=>$id);

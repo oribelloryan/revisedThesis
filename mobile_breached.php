@@ -11,6 +11,13 @@ header('Access-Control-Allow-Origin: *');
 		$stmt->bindValue(":pa", $password);
 		$stmt->bindValue(":na", $checkpointName);
 		$stmt->execute();
+
+		// var_dump($stmt);
+		// var_dump($location);
+		// var_dump($checkpointName);
+		// var_dump($id);
+		// var_dump($password);
+		
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$checkpoint_id = $row["id"];
 		$checkpoint_lat = $row["lat"];

@@ -55,10 +55,14 @@
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed: </p><span id="date_executed"></span>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoint(s): </p><p id="num_officers" style="margin-bottom:20px;"></p>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Target Location: </p><p id="location" style="margin-bottom:20px;"></p>
+     <div id="savingDiv" style=" margin: 0 auto;text-align: center; ">
+   
+    </div>
     <div id="map" ></div>
     <div id="formradius">
     <!-- <input type="number" id="radiussize"> -->
     <!-- <button onClick="release()">Coordinates</button> -->
+
     </div>
     </div><!-- /.container -->
     <script src="js/boundary.js"></script>
@@ -72,17 +76,7 @@
     var operationName;
     var markers = [];
     var complete = 'not complete';
-    // var breachedPoint = {
-    //   lat: undefined, 
-    //   lng: undefined,
-    //   a.lat: function(){
-    //     return this.lat;
-    //   },
-    //   a.lng: function(){
-    //     return this.lng;
-    //   }
-    // };
-    
+   
   function getUrl(){
       var url = window.location.href;
       var start = url.indexOf('=')+1;
@@ -134,45 +128,24 @@
 
             if (isConfirm){
               swal({
-                title: "Operation Name Input",
-                text: "Please provide the operation name",
+                title: "Operation Password",
+                text: "Please provide the operation password",
                 type: "input",
                 showCancelButton: true,
                 closeOnConfirm: false,
+                closeOnCancel: true,
                 animation: "slide-from-top",
                 confirmButtonColor: '#DD6B55',
-                inputPlaceholder: "Operation Name"
+                showLoaderOnConfirm: true,
+                inputPlaceholder: "Operation Password"
               },
               function(inputValue){
-                if (inputValue === false) return false;
   
                 if (inputValue === "") {
                   swal.showInputError("Please provide the operation name");
                   return false;
-                }else if(inputValue === operationName){
-                  MissionEnd();
-                }else{
-                  swal("Wrong operation name", "", "error");
-                }
-              });
-            } 
-        });
-
-    });
-
-    function MissionEnd(){
-       swal({
-            title: "Request to end operation",
-            text: "Submit to send end operation request",
-            type: "info",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            confirmButtonColor: '#DD6B55',
-            showLoaderOnConfirm: true,
-                 },
-            function(e){
-              console.log("e"+e);
-              var setTimer = setInterval(function(){
+                }else if(inputValue === password){
+                   var setTimer = setInterval(function(){
                  $.ajax({
                   url: "server_mission_complete.php",
                   type: "POST",
@@ -182,7 +155,13 @@
                   success: function(msg){
                       swal(msg);
                       clearInterval(setTimer);
+                      swal("Please wait... you'll be redirected");
                       complete = 'complete';
+                      setTimeout(function(){
+
+                        window.location.href = "server_view_plan.php";
+                      }, 2000);
+                      
                   },
                   error: function(){  
                     swal("Error in sending request","","error");
@@ -190,10 +169,60 @@
                   }
                  });
                  
-              }, 1000)
-            });
-    }
+                  }, 1000)
+                }else{
+                  swal.showInputError("Wrong Password");
+                }
+              });
+            } 
+        });
+    });
+
+    function saveFn(e){
+      var markersPass = JSON.stringify(getMarkersPosition());
+      swal({
+           title: "Deploying Breach",
+           text: "This new breached will be scene by the deployed police",
+           type: "",
+           showCancelButton: true,
+           confirmButtonColor: '#DD6B55',
+           confirmButtonText: 'Proceed',
+           cancelButtonText: "Cancel",
+           closeOnConfirm: false,
+           closeOnCancel: true
+          }, function(isConfirm){
+
+            $.ajax({
+              url: "server_saving_breached.php",
+              type: "POST",
+              data:{
+                src: 'save',
+                markers: markersPass,
+                id: oppId,
+                checkpointId: e.getAttribute('value-id'),
+                name: e.getAttribute('value-name')
+              },
+              success: function(data){
+                commit();
+                e.remove();
+                swal("Success");
+              }
+            })
     
+          
+        });
+    }
+
+    function commit(){
+      markers.forEach(function(item, index){
+        var contentString =  "<div>"+
+            "<p>Location Address: </p>"+
+            "</div>";
+        infowindow.setContent(contentString);
+        infowindow.open(map, item);
+      });
+    }
+
     function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
     zoom: minZoomLevel,
@@ -327,7 +356,7 @@
 
 
     setInterval(function(){
-    downloadUrl('server_tracking.php/?id='+getUrl()+'&?name='+operationName, function(data) {
+    downloadUrl('server_tracking.php?id='+getUrl()+'&?name='+operationName, function(data) {
           // console.log(data);
            var dataPass = JSON.parse(data.response);
          
@@ -367,7 +396,7 @@
     },5000);
       
         setInterval(function(){
-            downloadUrl('server_breached.php/?id='+getUrl(), function(data) {
+            downloadUrl('server_breached.php?id='+getUrl(), function(data) {
               var dataPass = JSON.parse(data.response);
               // console.log(dataPass);
               for (var i = 0; i < dataPass.breached.length; i++) {
@@ -402,16 +431,20 @@
                 icon: image,
                 map: map,
               });
-
+                $('#savingDiv').append('<button style="background-color:#2b3f6d;color:#ffffff;width:20%;" onclick="saveFn(this)" value-id='+breached.checkpoint_id+' value-name='+breached.name+'>SAVE BREACHED</button>');
                 breachedArray.push(breached);
                 map.setCenter(point);
                 map.setZoom(18);
-                downloadUrl('server_breachedUpdating.php/?checkpoint='+breached.checkpoint_id, function(data){
+                downloadUrl('server_breachedUpdating.php?checkpoint='+breached.checkpoint_id, function(data){
                 });
               }
             }
             });
         }, 3000);
+
+        function createBreached(){
+            
+        }
 
         setInterval(function(){
           var x,y;
@@ -616,13 +649,26 @@
 
       function pushMarker(array, data, callback){
           array.push(data);
-       
       }
 
        function locationPass(e){
       var data = e.lat()+','+e.lng();
       return data;
-    }
+      }
+
+      function getMarkersPosition(){
+      var markersPosition = [];
+      markers.forEach(function(x, y){
+        var pos = x.getPosition();
+        var obj = {
+          lat: pos.lat(),
+          lng: pos.lng(),
+          location: x.location
+        }
+        markersPosition.push(obj);
+      });
+      return markersPosition;
+      }
 
        function snapToRoad(data){
       var latitude, longitude;
@@ -666,10 +712,9 @@
          var contentString = "<div>"+
          "<p>Location Address: "+e+"</p>"+
          '<input type="button" class="deleteMarker" data-value="'+posTarget+'" onClick="deleteMarker(this)" value="DELETE MARKER"/>'+
-         '<input type="button" class="saveMarker" data-value="'+posTarget+'" onClick="saveMarker(this)" value="SAVE MARKER"/>'+
          "</div>";
 
-         var infowindow = new google.maps.InfoWindow();
+         infowindow = new google.maps.InfoWindow();
          google.maps.event.addListener(targetMarker, 'click', function() {
                 infowindow.setContent(contentString);
                 // infowindow.setPosition(new google.maps.LatLng(pos.lat - 0.1, pos.lng - 0.1));
@@ -724,52 +769,6 @@
            }
        });
     }
-
-    function saveMarker(e){
-     swal({
-          title: "Are you sure to save this marker ?",
-          text: "This would be seen by the deployed police",
-          type: "",
-          showCancelButton: true,
-          confirmButtonColor: '#DD6B55',
-          confirmButtonText: 'Save',
-          cancelButtonText: "No",
-          closeOnConfirm: false,
-          closeOnCancel: true
-          },
-      function(isConfirm){
-      if(isConfirm){
-      var value = e.getAttribute('data-value');
-      // console.log(value);
-      var i;
-      for(i = 0; i < markers.length; i++){
-        if(markers[i].get('id') == value){
-        console.log(markers[i].position.lat());
-        $.ajax({
-          url: "server_saving_breached.php",
-          type: "post",
-          data:{
-            id: oppId,
-            lat: markers[i].position.lat(),
-            lng: markers[i].position.lng(),
-            name: 'breached_checkpoint',
-            src: 'save'
-          },
-          success: function(e){
-            alert(e);
-            e.style.visibility = 'hidden'
-          // updateSaveMarker();
-          }
-        });
-        swal("Checkpoint Save","","success");
-        }
-      }
-      
-      }
-      });
-    }
-
-
 
      </script>
     <script async defer
