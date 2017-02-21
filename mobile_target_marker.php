@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 require("db_conn.php");
 
 // Get parameters from URL

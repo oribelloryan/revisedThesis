@@ -182,7 +182,8 @@
     function initMap(){
         map = new google.maps.Map(document.getElementById('map'), {
                 zoom: minZoomLevel,
-                center: centeroftheearth ,
+                fullscreenControl: true,
+                center: centeroftheearth,
                 mapTypeId: 'roadmap'
                 });
 
@@ -395,13 +396,16 @@
                               map: map
                           });
 
+                          google.maps.event.trigger(map, "resize");
                           breachedArray.push(dataPass.breached[i].id);
                           map.setCenter(point);
                           map.setZoom(18);
                       }
             }
             });
-         
+         var directionObject = {
+
+         }
          downloadUrl('mobile_breachedUpdatingNodes.php?id='+oppId, function(data) {
               var dataPass = JSON.parse(data.response);
               // console.log("newbreached");
@@ -430,7 +434,39 @@
                               map: map
                           });
 
-                          var dataAgain = directionService(locationAddress, point, i);
+                          // var directionsService = new google.maps.DirectionsService;
+                          // var directionsDisplay = new google.maps.DirectionsRenderer({
+                          //     draggable: false,
+                          //       map: map,
+                          //     // panel: document.getElementById('right-panel')
+                          //   });
+                         
+                          //  directionService.route({
+                          //   origin: origin,
+                          //   destination: destination,
+                          //   travelMode: 'DRIVING',
+                          //   avoidTolls: false,
+                          //   optimizeWaypoints: true,
+                          //   provideRouteAlternatives: true,
+                          // }, function(response, status) {
+                          //   if(status === 'OK') {
+                          //     display.setDirections(response);
+                          //   }
+                          // });
+                          //   var color = ['gold', 'blue', 'green', 'yellow', 'red', 'pink', 'purple', 'gold', 'green'];
+                          
+                          
+                          //   directionsDisplay.setOptions({ 
+                          //     polylineOptions: {
+                          //       strokeWeight: 4,
+                          //       strokeOpacity: 1,
+                          //       strokeColor:  color[index]
+                          //   },
+                          //     suppressMarkers: true,
+                          //     preserveViewport: true,
+                          //     routeIndex: 5 } );
+                          google.maps.event.trigger(map, "resize");
+                          directionService(locationAddress, point, i);
                           newBreachedArray.push(dataPass.newBreached[i].id);
                       }
             }
@@ -447,7 +483,16 @@
           }else{
           directionService(locationAddress, checkpointAddress);
           // clearInterval(directionServiceFn);
+          directionsDisplay.setMap(map);
         }
+        var d = distancesArray.reduce(function(a, b) {
+          return Math.min(a, b);
+        });
+          console.log(d +"min");
+         distancesArray.forEach(function(item, index){
+          console.log(item + "from array");
+         });
+         
         },5000);
 
     }
@@ -563,16 +608,16 @@
         }
         return a;
       }
-
+      var distancesArray = [];
       function directionService(origin, destination, index){
         var color = ['gold', 'blue', 'green', 'yellow', 'red', 'pink', 'purple', 'gold', 'green'];
         var directionsService = new google.maps.DirectionsService;
         var directionsDisplay = new google.maps.DirectionsRenderer({
           draggable: false,
-          map: map,
+            map: map,
           // panel: document.getElementById('right-panel')
         });
-        directionsDisplay.setMap(map);
+      
         directionsDisplay.setOptions({ 
           polylineOptions: {
             strokeWeight: 4,
@@ -584,7 +629,7 @@
           routeIndex: 5 } );
 
         directionsDisplay.addListener('directions_changed', function() {
-          return computeTotalDistance(directionsDisplay.getDirections());
+         computeTotalDistance(directionsDisplay.getDirections());
         });
         displayRoute(origin, destination, directionsService,
             directionsDisplay);
@@ -599,6 +644,8 @@
           optimizeWaypoints: true,
           provideRouteAlternatives: true,
         }, function(response, status) {
+          console.log("response");
+          console.log(response);
           if(status === 'OK') {
             display.setDirections(response);
           } else {

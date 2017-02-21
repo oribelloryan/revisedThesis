@@ -59,7 +59,7 @@
         </a><p class="lead">Operations History</p>
       </div>
       <div class="col-lg-3">
-        <img src="images/settings.png" class="icons">
+        <a href="server_about.php"><img src="images/settings.png" class="icons"></a>
         <p class="lead">About</p>
       </div>
     </center>

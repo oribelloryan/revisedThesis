@@ -3,7 +3,7 @@ include('db_conn.php');
 
 $today = date("M-d-Y");
 
-$sql = "SELECT * FROM tbl_operations WHERE date_execute  < CURDATE()";
+$sql = "SELECT * FROM tbl_operations WHERE date_execute  < CURDATE() OR mission_status LIKE 'finished'";
 $results = $conn->query($sql);
 
 function dateformatting($date){

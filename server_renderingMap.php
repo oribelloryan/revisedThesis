@@ -76,7 +76,7 @@
     var operationName;
     var markers = [];
     var complete = 'not complete';
-   
+    var boundary;
   function getUrl(){
       var url = window.location.href;
       var start = url.indexOf('=')+1;
@@ -155,10 +155,10 @@
                   success: function(msg){
                       swal(msg);
                       clearInterval(setTimer);
-                      swal("Please wait... you'll be redirected");
+                      
                       complete = 'complete';
                       setTimeout(function(){
-
+                        swal("Please wait... you'll be redirected");
                         window.location.href = "server_view_plan.php";
                       }, 2000);
                       
@@ -226,11 +226,12 @@
     function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
     zoom: minZoomLevel,
+    fullscreenControl: true,
     center: centeroftheearth ,
     mapTypeId: 'roadmap'
     });
 
-    var boundary = new google.maps.Polygon({paths: boundaries});
+    boundary = new google.maps.Polygon({paths: boundaries});
     
     var boundaryLine = new google.maps.Polyline({
           path: boundaries,
@@ -583,11 +584,21 @@
       }
 
 
-       function circlePath(center,radius,points){
+        function circlePath(center,radius,points){
         var a=[],p=360/points,d=0;
         for(var i=0;i<points;++i,d+=p){
-            a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
-        }
+            if(google.maps.geometry.poly.containsLocation(google.maps.geometry.spherical.computeOffset(center,radius,d), boundary)){
+              a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
+            }else{
+              // var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
+              // for (var i = 0; i < boundaries.length; i++) {
+              // if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
+              //   a.push(boundaries[i]);
+              //   i = boundaries.lenght + 100;
+              //   break;
+              // }
+           }
+         }
         return a;
       }
 
