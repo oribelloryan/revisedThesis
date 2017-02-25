@@ -5,6 +5,10 @@ $db   = 'interceptor';
 $user = 'root';
 $pass = '';
 $charset = 'utf8';
+$options = [
+    'cost' => 11,
+    'salt' => mcrypt_create_iv(25, MCRYPT_DEV_URANDOM),
+];
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $opt = [

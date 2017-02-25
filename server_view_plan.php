@@ -4,7 +4,7 @@ include('db_conn.php');
 
 $today = date("M-d-Y");
 
-$sql = "SELECT * FROM tbl_operations WHERE date_execute  >= CURDATE()";
+$sql = "SELECT * FROM tbl_operations WHERE date_execute  >= CURDATE() AND mission_status LIKE 'not done'";
 $results = $conn->query($sql);
 
 function dateformatting($date){
@@ -134,15 +134,16 @@ function dateDifference($date1, $date2){
     <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     <script>
     $(document).ready(function(){
-       var table = $('#datatable').DataTable();
-
+       var table = $('#datatable').DataTable()
+                   .order( [ 4, 'asc' ] )
+                   .draw();
        $('#datatable tbody').on( 'click', 'td', function () {
           var id = table.row( this ).data()[0];
           var operation = table.row( this ).data()[1];
           var today = table.row( this ).data()[4];
-          // if(today > 0){
-                // swal("Operation can't be viewed", "Operation is not available for viewing", "error");
-          // }else{
+          if(today > 0){
+                swal("Operation can't be viewed", "Operation is not available for viewing", "error");
+          }else{
                 swal({
                       title: "You are to proceed in the operation "+operation+"?",
                       text: "",
@@ -159,7 +160,7 @@ function dateDifference($date1, $date2){
                       } 
                     });
                    
-          //      }
+               }
                   });
                   });
     </script>

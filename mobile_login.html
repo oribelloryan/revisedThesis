@@ -111,7 +111,10 @@
           console.log(msg.mission_status);
           if(msg == "NoRecord"){
             alert("Invalid Credentials");
-          }else{
+          }else if(msg == "Invalid"){
+            alert("Invalid Password");
+          }
+          else{
                if(msg.mission_status == 'finished'){
                 alert("Operation has already lapsed");
                }else{

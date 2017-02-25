@@ -140,43 +140,58 @@
                 inputPlaceholder: "Operation Password"
               },
               function(inputValue){
-  
+                  
                 if (inputValue === "") {
-                  swal.showInputError("Please provide the operation name");
+                  swal.showInputError("Please provide the operation password");
                   return false;
-                }else if(inputValue === password){
-                   var setTimer = setInterval(function(){
-                 $.ajax({
+                }else{
+                  $.ajax({
                   url: "server_mission_complete.php",
                   type: "POST",
                   data:{
-                    id: oppId
+                    id: oppId,
+                    password: inputValue,
+                    source: 'pass'
                   },
-                  success: function(msg){
-                      swal(msg);
-                      clearInterval(setTimer);
-                      
-                      complete = 'complete';
-                      setTimeout(function(){
-                        swal("Please wait... you'll be redirected");
-                        window.location.href = "server_view_plan.php";
-                      }, 2000);
-                      
-                  },
-                  error: function(){  
-                    swal("Error in sending request","","error");
-                     clearInterval(setTimer);
-                  }
-                 });
-                 
-                  }, 1000)
-                }else{
-                  swal.showInputError("Wrong Password");
-                }
-              });
-            } 
-        });
-    });
+                  success: function(e){
+                        if(e == 'valid'){
+                           var setTimer = setInterval(function(){
+                             $.ajax({
+                              url: "server_mission_complete.php",
+                              type: "POST",
+                              data:{
+                                id: oppId,
+                                source: 'complete'
+                              },
+                              success: function(msg){
+                                  swal(msg);
+                                  clearInterval(setTimer);
+                                  
+                                  complete = 'complete';
+                                  setTimeout(function(){
+                                    swal("Please wait... you'll be redirected");
+                                    window.location.href = "server_view_plan.php";
+                                  }, 2000);
+                                  
+                              },
+                              error: function(){  
+                                swal("Error in sending request","","error");
+                                 clearInterval(setTimer);
+                              }
+                            });
+                           });
+                         }else{
+                          swal.showInputError("Invalid Password");
+                          return false;
+                         }
+                      }
+                  });
+                    }
+                
+                });
+              }
+             });
+            });
 
     function saveFn(e){
       var markersPass = JSON.stringify(getMarkersPosition());
@@ -589,15 +604,7 @@
         for(var i=0;i<points;++i,d+=p){
             if(google.maps.geometry.poly.containsLocation(google.maps.geometry.spherical.computeOffset(center,radius,d), boundary)){
               a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
-            }else{
-              // var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
-              // for (var i = 0; i < boundaries.length; i++) {
-              // if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
-              //   a.push(boundaries[i]);
-              //   i = boundaries.lenght + 100;
-              //   break;
-              // }
-           }
+            }
          }
         return a;
       }
