@@ -27,7 +27,7 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
     <link href="dist/css/starter-template.css" rel="stylesheet">
     <style>
     body{
-      background-image:url('images/bg-1.jpg');
+      background-image:url('images/assets/bg-1.jpg');
       background-repeat:no-repeat;
       background-size: 100% 190%; 
       background-color:#fbfbfb;
@@ -38,9 +38,9 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
 
   <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
-    <a href="index.php"><img src="images/back.png" style="width:50px;" align="right"></a>
+    <a href="index.php"><img src="images/assets/back.png" style="width:50px;" align="right"></a>
     <div class="container">
       <div class="col-lg-6" style="margin-top:-5%;">
         <h1>OPERATION DETAILS</h1>
@@ -57,23 +57,23 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
         <!-- <label>Number of Officers Required</label>
         <input type="number" class="form-control" name="num_officers" required> -->
         <br>
-        <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Proceed to Plotting</button><button type="submit" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Cancel Plan</button>
+        <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Proceed to Plotting</button><button onClick='backFn()' class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Cancel Plan</button>
         </form>
       </div>
       <div class="col-lg-6">
-        <center><img src="images/pnp.png" alt="pnp_logo" style="width:60%;margin-left:30%;opacity:0.75;margin-top:-5%;"></center>
+        <center><img src="images/assets/pnp.png" alt="pnp_logo" style="width:60%;margin-left:30%;opacity:0.75;margin-top:-5%;"></center>
       </div>
     <!--<center>
       <div class="col-lg-4">
-        <img src="images/new_plan.png" class="icons">
+        <img src="images/assets/new_plan.png" class="icons">
         <p class="lead">Create New Plan</p>
       </div>
       <div class="col-lg-4">
-        <img src="images/histor y.png" class="icons">
+        <img src="images/assets/histor y.png" class="icons">
         <p class="lead">Operations History</p>
       </div>
       <div class="col-lg-4">
-        <img src="images/settings.png" class="icons">
+        <img src="images/assets/settings.png" class="icons">
         <p class="lead">About</p>
       </div>
     </center>
@@ -84,6 +84,11 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script>
+      function backFn(){
+        window.location = 'index.php';
+      }
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>

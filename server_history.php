@@ -82,11 +82,11 @@ function dateDifference($date1, $date2){
   </head>
   <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
 
     <div class="container-fluid">
-    <a href="index.php"><img src="images/back.png" style="width:50px;margin-left: 10px" align="right"></a>
+    <a href="index.php"><img src="images/assets/back.png" style="width:50px;margin-left: 10px" align="right"></a>
     <br>
     <br>
     <div class="row">

@@ -19,7 +19,7 @@
     <link href="dist/css/starter-template.css" rel="stylesheet">
     <style>
     body{
-      background-image:url('images/bg-1.jpg');
+      background-image:url('images/assets/bg-1.jpg');
       background-repeat:no-repeat;
       background-size: 100% 190%; 
       background-color:#fbfbfb;
@@ -30,13 +30,14 @@
 
   <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
 
     <div class="container">
       <div class="col-lg-6" style="margin-top:-5%;">
         <h1>TARGET PERSON DETAILS</h1>
-        <form action="" method="POST">
+        <form action="server_storing.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="location" value="server_profiling"/>
         <label>Full Name</label>
         <input type="text" class="form-control" name="target_name" required>
         <label>Age</label><label style="margin-left:45%;">Gender</label>
@@ -47,7 +48,7 @@
         <option value="Male">Male</option>                  
         </select>
         <label>Height</label><label style="margin-left:42%;">Committed Crime</label>
-        <input type="text" class="form-control" name="target_age" style="width:45%;" required>
+        <input type="text" class="form-control" name="target_height" style="width:45%;" required>
         <select name="target_crime" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;" required>
           <option hidden>Select Crime</option>
           <option value="Drug Possession">Drug Possession</option>
@@ -58,13 +59,13 @@
           <option value="Theft">Theft</option>
         </select>
         <label>Image</label>
-        <input type="file" class="form-control" name="target_pic" required>
+        <input type="file" class="form-control" name="pic" required>
         <br>
         <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>
         </form>
       </div>
       <div class="col-lg-6">
-        <center><img src="images/pnp.png" alt="pnp_logo" style="width:60%;margin-left:30%;opacity:0.75;margin-top:-5%;"></center>
+        <center><img src="images/assets/pnp.png" alt="pnp_logo" style="width:60%;margin-left:30%;opacity:0.75;margin-top:-5%;"></center>
       </div>
     </div><!-- /.container -->
 

@@ -18,7 +18,7 @@
     <link href="dist/css/starter-template.css" rel="stylesheet">
     <style>
     body{
-      background-image:url('images/bg-1.jpg');
+      background-image:url('images/assets/bg-1.jpg');
       background-repeat:no-repeat;
       background-size: 100% 190%; 
       background-color:#fbfbfb;
@@ -29,9 +29,9 @@
 
   <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
-
+    <a href="index.php"><img src="images/assets/back.png" style="width:50px;" align="right"></a>
     <div class="container">
       <div class="col-lg-6" style="margin-top:-5%;">
         <div class="col-lg-12">
@@ -42,33 +42,33 @@
         <h1>MEET THE DEVELOPERS</h1>
         </div>
         <div class="col-lg-12" style="margin-top:-5%;">
-        <img src="images/ryan.png" alt="dev1" style="width:30%;">    
+        <img src="images/assets/ryan.png" alt="dev1" style="width:30%;">    
         </div>
         <div class="col-lg-12" style="margin-top:-40.5%;margin-left:30%;">
-        <img src="images/daybee.png" alt="dev1" style="width:30%;">     
+        <img src="images/assets/daybee.png" alt="dev1" style="width:30%;">     
         </div>
         <div class="col-lg-12" style="margin-top:-40.5%;margin-left:60%;">
-        <img src="images/marwen.png" alt="dev1" style="width:30%;">     
+        <img src="images/assets/marwen.png" alt="dev1" style="width:30%;">     
         </div>
         <div class="col-lg-12" style="margin-top:-40.5%;margin-left:90%;">
-        <img src="images/marwen.png" alt="dev1" style="width:30%;">     
+        <img src="images/assets/yape.png" alt="dev1" style="width:30%;">     
         </div>
         
       </div>
       <div class="col-lg-6">
-        <img src="images/logo_interceptor.png" alt="pnp_logo" style="width:60%;margin-left:35%;opacity:0.75;margin-top:-15%;">
+        <img src="images/assets/logo_interceptor.png" alt="pnp_logo" style="width:60%;margin-left:35%;opacity:0.75;margin-top:-15%;">
       </div>
     <!--<center>
       <div class="col-lg-4">
-        <img src="images/new_plan.png" class="icons">
+        <img src="images/assets/new_plan.png" class="icons">
         <p class="lead">Create New Plan</p>
       </div>
       <div class="col-lg-4">
-        <img src="images/histor y.png" class="icons">
+        <img src="images/assets/histor y.png" class="icons">
         <p class="lead">Operations History</p>
       </div>
       <div class="col-lg-4">
-        <img src="images/settings.png" class="icons">
+        <img src="images/assets/settings.png" class="icons">
         <p class="lead">About</p>
       </div>
     </center>

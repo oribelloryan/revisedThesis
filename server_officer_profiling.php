@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>THE INTERCEPTOR - CREATE OPERATION</title>
+    <title>THE INTERCEPTOR - TARGET PROFILE</title>
 
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,7 +19,7 @@
     <link href="dist/css/starter-template.css" rel="stylesheet">
     <style>
     body{
-      background-image:url('images/bg-1.jpg');
+      background-image:url('images/assets/bg-1.jpg');
       background-repeat:no-repeat;
       background-size: 100% 190%; 
       background-color:#fbfbfb;
@@ -29,152 +30,42 @@
 
   <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
 
     <div class="container">
-      <div class="col-xl-6" style="margin-top:-7%;">
-        <h1 style="margin-bottom:3%">OFFICERS LIST</h1>
-        <form action="" method="POST">
-        <select name="lead" class="form-control" style="width:20%;">
-        <option value="PSINSP">PSINP</option>    
-        <option value="PINSP">PINSP</option>
-        <option value="SPO4">SPO4</option>
-        <option value="SPO3">SPO3</option>         
-        <option value="SPO2">SPO2</option>
-        <option value="SPO1">SPO1</option>
+      <div class="col-lg-6" style="margin-top:-5%;">
+        <h1>POLICE DETAILS</h1>
+        <form action="server_storing.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="location" value="server_officer_profiling"/>
+        <label>Full Name</label>
+        <input type="text" class="form-control" name="name" required>
+        <label>Age</label><label style="margin-left:45%;">Gender</label>
+        <input type="text" class="form-control" name="age" style="width:45%;" required>
+        <select name="gender" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;">
+        <option hidden>Select Gender</option>
+        <option value="Female">Female</option>    
+        <option value="Male">Male</option>                  
         </select>
-        <input type="text" class="form-control" name="lead_name" placeholder="Enter Full Name" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-        <select name="lead_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
-        <option hidden>Checkpoint Position</option>
-        <option value="Team Leader">Team Leader</option>
+        <label>Height</label><label style="margin-left:42%;">Position</label>
+        <input type="text" class="form-control" name="height" style="width:45%;" required>
+        <select name="position" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;" required>
+          <option hidden>Position</option>
+          <option value="PO1">Police Officer I</option>
+          <option value="PO2">Police Officer II</option>
+          <option value="SPO1">Senior Police Officer I</option>
+          <option value="SPO2">Senior Police Officer II</option>
+          <option value="PINSP">Police Inspector</option>
+          <option value="PSINSP">Police Senior Inspector</option>
         </select>
-        <br>
-        <!-- Officer 1-->
-        <select name="of1" class="form-control" style="width:20%;">
-        <option value="SPO4">SPO4</option>
-        <option value="SPO3">SPO3</option>         
-        <option value="SPO2">SPO2</option>
-        <option value="SPO1">SPO1</option>
-        <option value="PO4">PO4</option>
-        <option value="PO3">PO3</option>
-        <option value="PO2">PO2</option>
-        <option value="PO1">PO1</option>
-        </select>
-        <input type="text" class="form-control" name="of1name" placeholder="Enter Officer Name 1" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-        <select name="of1_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
-        <option hidden>Checkpoint Position</option>
-        <option value="Assault">Assault Team</option>
-        <option value="Lookout">Look-out</option>
-        <option value="Comm">Communication</option>
-        </select>
-        <!--Officer 1 End-->
-        <br>
-        <!-- Officer 2-->
-        <select name="of2" class="form-control" style="width:20%;">
-        <option value="SPO4">SPO4</option>
-        <option value="SPO3">SPO3</option>         
-        <option value="SPO2">SPO2</option>
-        <option value="SPO1">SPO1</option>
-        <option value="PO4">PO4</option>
-        <option value="PO3">PO3</option>
-        <option value="PO2">PO2</option>
-        <option value="PO1">PO1</option>
-        </select>
-        <input type="text" class="form-control" name="of2name" placeholder="Enter Officer Name 2" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-        <select name="of2_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
-        <option hidden>Checkpoint Position</option>
-        <option value="Assault">Assault Team</option>
-        <option value="Lookout">Look-out</option>
-        <option value="Comm">Communication</option>
-        </select>
-        <!--Officer 2 End-->
-        <br>
-        <!-- Officer 3-->
-        <select name="of3" class="form-control" style="width:20%;">
-        <option value="SPO4">SPO4</option>
-        <option value="SPO3">SPO3</option>         
-        <option value="SPO2">SPO2</option>
-        <option value="SPO1">SPO1</option>
-        <option value="PO4">PO4</option>
-        <option value="PO3">PO3</option>
-        <option value="PO2">PO2</option>
-        <option value="PO1">PO1</option>
-        </select>
-        <input type="text" class="form-control" name="of3name" placeholder="Enter Officer Name 3" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-        <select name="of3_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
-        <option hidden>Checkpoint Position</option>
-        <option value="Assault">Assault Team</option>
-        <option value="Lookout">Look-out</option>
-        <option value="Comm">Communication</option>
-        </select>
-        <!--Officer 3 End-->
-        <br>
-        <!-- Officer 4-->
-        <select name="of4" class="form-control" style="width:20%;">
-        <option value="SPO4">SPO4</option>
-        <option value="SPO3">SPO3</option>         
-        <option value="SPO2">SPO2</option>
-        <option value="SPO1">SPO1</option>
-        <option value="PO4">PO4</option>
-        <option value="PO3">PO3</option>
-        <option value="PO2">PO2</option>
-        <option value="PO1">PO1</option>
-        </select>
-        <input type="text" class="form-control" name="of4name" placeholder="Enter Officer Name 4" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-        <select name="of4_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
-        <option hidden>Checkpoint Position</option>
-        <option value="Assault">Assault Team</option>
-        <option value="Lookout">Look-out</option>
-        <option value="Comm">Communication</option>
-        </select>
-        <!--Officer 4 End-->
-        <br>
-        <!-- Officer 5-->
-        <select name="of5" class="form-control" style="width:20%;">
-        <option value="SPO4">SPO4</option>
-        <option value="SPO3">SPO3</option>         
-        <option value="SPO2">SPO2</option>
-        <option value="SPO1">SPO1</option>
-        <option value="PO4">PO4</option>
-        <option value="PO3">PO3</option>
-        <option value="PO2">PO2</option>
-        <option value="PO1">PO1</option>
-        </select>
-        <input type="text" class="form-control" name="of5name" placeholder="Enter Officer Name 5" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-        <select name="of5_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
-        <option hidden>Checkpoint Position</option>
-        <option value="Assault">Assault Team</option>
-        <option value="Lookout">Look-out</option>
-        <option value="Comm">Communication</option>
-        </select>
-        <!--Officer 5 End-->
-        <br>
-        <!-- Officer 6-->
-        <select name="of6" class="form-control" style="width:20%;">
-        <option value="SPO4">SPO4</option>
-        <option value="SPO3">SPO3</option>         
-        <option value="SPO2">SPO2</option>
-        <option value="SPO1">SPO1</option>
-        <option value="PO4">PO4</option>
-        <option value="PO3">PO3</option>
-        <option value="PO2">PO2</option>
-        <option value="PO1">PO1</option>
-        </select>
-        <input type="text" class="form-control" name="of6name" placeholder="Enter Officer Name 6" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-        <select name="of6_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
-        <option hidden>Checkpoint Position</option>
-        <option value="Assault">Assault Team</option>
-        <option value="Lookout">Look-out</option>
-        <option value="Comm">Communication</option>
-        </select>
-        <!--Officer 6 End-->
+        <label>Image</label>
+        <input type="file" class="form-control" name="police" required>
         <br>
         <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>
         </form>
       </div>
       <div class="col-lg-6">
-        <center><img src="images/pnp.png" alt="pnp_logo" style="width:60%;margin-left:30%;opacity:0.75;margin-top:-5%;"></center>
+        <center><img src="images/assets/pnp.png" alt="pnp_logo" style="width:60%;margin-left:30%;opacity:0.75;margin-top:-5%;"></center>
       </div>
     </div><!-- /.container -->
 

@@ -47,7 +47,7 @@
     left: 0;
     height: 100%;
     width: 100%;
-    background: rgba(255, 255, 255, .8) url('images/load.gif') 50% 50% no-repeat;
+    background: rgba(255, 255, 255, .8) url('images/assets/load.gif') 50% 50% no-repeat;
     }
 /* When the body has the loading class, we turn
    the scrollbar off with overflow:hidden */
@@ -66,7 +66,7 @@
 
     <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
     <div class="modal"></div>
 
@@ -218,7 +218,7 @@
 
         if(ofPerimeter){
          var image = {
-          url: 'images/baricade2.png', // image is 512 x 512
+          url: 'images/assets/baricade2.png', // image is 512 x 512
 
           scaledSize: new google.maps.Size(28,28), // scaled size
             origin: new google.maps.Point(0,0), // origin
@@ -322,7 +322,7 @@
        
 
         var image = {
-           url: 'images/crosshair.png',
+           url: 'images/assets/crosshair.png',
            // size: new google.maps.Size(71, 71),
            anchor: new google.maps.Point(10, 10),
            scaledSize: new google.maps.Size(25, 25)
@@ -373,15 +373,7 @@
         for(var i=0;i<points;++i,d+=p){
             if(google.maps.geometry.poly.containsLocation(google.maps.geometry.spherical.computeOffset(center,radius,d), boundary)){
               a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
-            }else{
-              // var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
-              // for (var i = 0; i < boundaries.length; i++) {
-              // if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
-              //   a.push(boundaries[i]);
-              //   i = boundaries.lenght + 100;
-              //   break;
-              // }
-           }
+            }
          }
         return a;
       }

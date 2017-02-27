@@ -10,7 +10,8 @@
     <link rel="icon" href="../../favicon.ico">
 
     <title>THE INTERCEPTOR - OPERATION ON GOING</title>
-
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous">
+    </script>
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -30,43 +31,80 @@
       }
       #checkpoints{
         visibility: hidden;
-      }.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background: rgba(255, 255, 255, .8) url('images/load.gif') 50% 50% no-repeat;
-    }
+      }
+      .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(255, 255, 255, .8) url('images/assets/load.gif') 50% 50% no-repeat;
+      }
 /* When the body has the loading class, we turn
    the scrollbar off with overflow:hidden */
-    body.loading {
+      body.loading {
     /*background-color: red;*/
-    overflow: hidden;
-  }
+      overflow: hidden;
+      }
 /* Anytime the body has the loading class, our
    modal element will be visible */
-    body.loading .modal {
-    display: block;
-  }
+      body.loading .modal {
+      display: block;
+      }
     </style>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous">
-    </script>
   </head>
   <body>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Modal Header</h4>
+          </div>
+          <div class="modal-body">
+            <form action="" method="POST">
+              <select name="lead" class="form-control" style="width:20%;">
+              <option value="PSINSP">PSINP</option>    
+              <option value="PINSP">PINSP</option>
+              <option value="SPO4">SPO4</option>
+              <option value="SPO3">SPO3</option>         
+              <option value="SPO2">SPO2</option>
+              <option value="SPO1">SPO1</option>
+              </select>
+              <input type="text" class="form-control" name="lead_name" placeholder="Enter Full Name" style="margin-top:-7.25%;margin-left:22%;width:40%;" required>
+              <select name="lead_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:65%;">
+              <option hidden>Checkpoint Position</option>
+              <option value="Team Leader">Team Leader</option>
+              </select>
+              <br>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png"" style="width:400px;"></center>
+      <center><img src="images/assets/header.png"" style="width:400px;"></center>
     </div>
     <div class="modal"></div>
-    <a href="index.php"><img src="images/home.png" style="width:50px;" align="right"></a>
+    <a href="index.php"><img src="images/assets/home.png" style="width:50px;" align="right"></a>
     <div class="container" style="margin-top:50px;">    
       <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
       <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed:</p> <span id="date_executed"></span>
       <p id = 'checkpointSpan' style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoints:</p> <p id="num_officers" style="margin-bottom:20px;"></p>
       <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Target Location: </p><p id="location" style="margin-bottom:20px;"></p>
+      <div>
+      <img src="images/assets/header.png" style="width:35px;height:35px;visibility:hidden" id="img">
+      </div>
       <div id="map" ></div>
     </div><!-- /.container -->
     <script src="js/boundary.js"></script>
@@ -75,13 +113,16 @@
         var radiusSize = 0;
         var boundary;
         var openEdit = false;
+      
         function getUrl(){
             var url = window.location.href;
             var start = url.indexOf('=')+1;
             var id = url.substring(start);
             return id;
         }
-    
+        
+
+
         var oppId = getUrl();
         var target;
   
@@ -99,6 +140,8 @@
                 document.getElementById('date_executed').innerHTML = parsed.date_execute;
                 document.getElementById('num_officers').innerHTML = parsed.officers;
                 document.getElementById('location').innerHTML = parsed.location;
+                document.getElementById('img').src = parsed.criminal_image;
+                
             }
         });
         
@@ -150,12 +193,12 @@
 
                     map.setCenter(point);
                     map.setZoom(17);
-
+                    var imageSrc = document.getElementById('img').src;
                     var text = document.createElement('text');
                     text.textContent = name
                     infowincontent.appendChild(text);
                     var image = {
-                        url: 'images/crosshair.png',
+                        url: imageSrc,
                      // size: new google.maps.Size(71, 71),
                         anchor: new google.maps.Point(10, 10),
                         scaledSize: new google.maps.Size(25, 25)
@@ -211,6 +254,9 @@
       });
       }
         
+      function addOfficerFn(e){
+        window.location = 'server_officer_designation.php?checkpoint='+e.getAttribute('data-check');
+      }
 
       function createMarker(checkpointId, point, infoWindow, name, map, loc){
           var contentString;
@@ -219,10 +265,11 @@
           '<h6 class="marker-heading">Location:'+loc+'</h6>'+
           '<h6 class="marker-heading-id" value='+checkpointId+'>Checkpoint Id:'+checkpointId+'</h6>'+ 
           '<div class="marker-data" align="center"><h6 class="editNameTxt">Name: '+name+'</h6><button style="background-color:#bd593d;color:#ffffff;" class="editName">Edit Name</button>'+
+          '<button style="background-color:#bd593d;color:#ffffff;" class="addOfficer" data-check='+checkpointId+' onClick="addOfficerFn(this)">Add Officer</button>'+
           '</div></span></div></div>');    
 
            var image = {
-            url: 'images/baricade2.png', // image is 512 x 512
+            url: 'images/assets/baricade2.png', // image is 512 x 512
             scaledSize: new google.maps.Size(27,27), // scaled size
             origin: new google.maps.Point(0,0), // origin
             anchor: new google.maps.Point(14,28),
@@ -243,6 +290,8 @@
                 infoWindow.setContent(contentString[0]);
                 infoWindow.open(map, marker);
               });
+
+               
 
                var editName = contentString.find('button.editName')[0];
     
@@ -387,17 +436,8 @@
         for(var i=0;i<points;++i,d+=p){
             if(google.maps.geometry.poly.containsLocation(google.maps.geometry.spherical.computeOffset(center,radius,d), boundary)){
               a.push(google.maps.geometry.spherical.computeOffset(center,radius,d));
-            }else{
-          //     var geoLat = google.maps.geometry.spherical.computeOffset(center,radius,d);
-          //     for (var i = 0; i < boundaries.length; i++) {
-          //     if(boundaries[i].lat > geoLat.lat || boundaries[i].lng < geoLat.lng){
-          //       a.push(boundaries[i]);
-          //       i = boundaries.lenght + 100;
-          //       break;
-          //     }
-          // }
+            }
          }
-        }
         return a;
       }
      </script>

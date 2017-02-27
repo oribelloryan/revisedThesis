@@ -29,7 +29,7 @@
 
   <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
 
     <!--<ul class="nav navbar-nav">
@@ -47,19 +47,23 @@
     <div class="container">
     <center>
       <div class="col-lg-3">
-        <a href="server_create_plan.php"><img src="images/new_plan.png" class="icons"></a>
+        <a href="server_create_plan.php"><img src="images/assets/new_plan.png" class="icons"></a>
         <p class="lead">Create New Plan</p>
       </div>
       <div class="col-lg-3">
-        <a href="server_view_plan.php"><img src="images/view_btn.png" class="icons"></a>
+        <a href="server_view_plan.php"><img src="images/assets/view_btn.png" class="icons"></a>
         <p class="lead">View Operations</p>
       </div>
       <div class="col-lg-3">
-        <a href="server_history.php"><img src="images/history.png" class="icons">
+        <a href="server_history.php"><img src="images/assets/history.png" class="icons">
         </a><p class="lead">Operations History</p>
       </div>
       <div class="col-lg-3">
-        <a href="server_about.php"><img src="images/settings.png" class="icons"></a>
+        <a href="server_officer_profiling.php"><img src="images/assets/add.png" class="icons"></a>
+        <p class="lead">Add police</p>
+      </div>
+      <div class="col-lg-3">
+        <a href="server_about.php"><img src="images/assets/settings.png" class="icons"></a>
         <p class="lead">About</p>
       </div>
     </center>
