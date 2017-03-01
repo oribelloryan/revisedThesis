@@ -1,30 +1,30 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-include('db_conn.php');
+  header('Access-Control-Allow-Origin: *');
+  include('db_conn.php');
 
-$today = date("M-d-Y");
+  $today = date("M-d-Y");
 
-$sql = "SELECT * FROM tbl_operations WHERE date_execute  >= CURDATE() AND mission_status LIKE 'not done'";
-$results = $conn->query($sql);
+  $sql = "SELECT * FROM tbl_operations WHERE date_execute  >= CURDATE() AND mission_status LIKE 'not done'";
+  $results = $conn->query($sql);
 
-function dateformatting($date){
-    
-return date_format(date_create($date),'M-d-Y ');
-}
+  function dateformatting($date){
+      
+  return date_format(date_create($date),'M-d-Y ');
+  }
 
-function dateDifference($date1, $date2){
+  function dateDifference($date1, $date2){
 
-    $d1 = new DateTime($date1);
-    $d2 = new DateTime($date2);
+      $d1 = new DateTime($date1);
+      $d2 = new DateTime($date2);
 
-    $diff = $d1->diff($d2);
-    $diff = $diff->format('%R%a days');
-    if($diff > 0){
-    return array("#99FF99", $diff); //green
-    }else if($diff<0){
-    return array("#FBBDBC", $diff); // red
-    }
-}
+      $diff = $d1->diff($d2);
+      $diff = $diff->format('%R%a days');
+      if($diff > 0){
+      return array("#99FF99", $diff); //green
+      }else if($diff<0){
+      return array("#FBBDBC", $diff); // red
+      }
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -102,7 +102,7 @@ function dateDifference($date1, $date2){
     <th>Operation</th>
     <th>Date Planned</th>
     <th>Date Executed</th>
-    <th>Execution day(s) to go</th>
+    <th>Execution (day/s to go)</th>
     </thead>
     <tbody>
     <?php
@@ -116,7 +116,7 @@ function dateDifference($date1, $date2){
              echo "<td>" .dateformatting($result['date_plan'])."</td>";
              echo "<td>" .dateformatting($result['date_execute'])."</td>";
              $neg = abs($diff);
-            echo "<td> $neg </td>";
+            echo "<td><center>$neg</center></td>";
      echo "</tr></a>";
     }
     ?>
@@ -141,9 +141,9 @@ function dateDifference($date1, $date2){
           var id = table.row( this ).data()[0];
           var operation = table.row( this ).data()[1];
           var today = table.row( this ).data()[4];
-          if(today > 0){
-                swal("Operation can't be viewed", "Operation is not available for viewing", "error");
-          }else{
+          // if(today > 0){
+          //       swal("Operation can't be viewed", "Operation is not available for viewing", "error");
+          // }else{
                 swal({
                       title: "You are to proceed in the operation "+operation+"?",
                       text: "",
@@ -160,7 +160,7 @@ function dateDifference($date1, $date2){
                       } 
                     });
                    
-               }
+               // }
                   });
                   });
     </script>

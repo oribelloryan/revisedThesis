@@ -42,10 +42,10 @@
 
   <body>
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
-      <center><img src="images/header.png" style="width:400px;"></center>
+      <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
-    <a href="server_history.php"><img src="images/back.png" style="width:50px;margin-left: 10px" align="right"></a>
-    <a href="index.php"><img src="images/home.png" style="width:50px;" align="right"></a>
+    <a href="server_history.php"><img src="images/assets/back.png" style="width:50px;margin-left: 10px" align="right"></a>
+    <a href="index.php"><img src="images/assets/home.png" style="width:50px;" align="right"></a>
     <!--  <div id="right-panel">
       <p>Total Distance: <span id="total"></span></p>
     </div> -->
@@ -147,7 +147,7 @@
               perimeter(point, radiusSize, map);
 
               var image = {
-                  url: 'images/crosshair.png',
+                  url: 'images/assets/crosshair.png',
            // size: new google.maps.Size(71, 71),
                   anchor: new google.maps.Point(10, 10),
                   scaledSize: new google.maps.Size(25, 25)
@@ -188,7 +188,7 @@
               infowincontent.appendChild(text);
 
                var image = {
-              url: 'images/baricade2.png', // image is 512 x 512
+              url: 'images/assets/baricade2.png', // image is 512 x 512
 
               scaledSize: new google.maps.Size(28,28), // scaled size
               origin: new google.maps.Point(0,0), // origin
@@ -238,7 +238,7 @@
               perimeter(point, radiusSize, map);
 
                var image = {
-              url: 'images/barricade_breached.png', // image is 512 x 512
+              url: 'images/assets/barricade_breached.png', // image is 512 x 512
 
               scaledSize: new google.maps.Size(28,28), // scaled size
               origin: new google.maps.Point(0,0), // origin

@@ -355,6 +355,7 @@
                 }
                }
             });
+
          intervalCounter++;
          downloadUrl('mobile_breachedUpdating.php/?id='+oppId, function(data) {
               var dataPass = JSON.parse(data.response);
@@ -566,7 +567,8 @@
                   id: oppId,
                   password: pass,
                   breached: locationAddress,
-                  checkpointName: checkpointName
+                  checkpointName: checkpointName,
+                  time: new Date()
                },
                success: function(msg){
                alert(msg);

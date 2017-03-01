@@ -12,7 +12,7 @@ $node = $dom->createElement("markers");
 $parnode = $dom->appendChild($node);
 
 // Search the rows in the markers table
-$query = "SELECT * FROM checkpoints AS c WHERE operation_id = $id";
+$query = "SELECT c.name  AS name, c.id AS id, c.lat AS lat, c.lng AS lng, cc.image AS image FROM checkpoints AS c LEFT JOIN checkpoint_composition AS cc ON c.id = cc.checkpoint_id where cc.designation LIKE 'team leader' AND c.operation_id = $id";
 $result = $conn->query($query);
 
 header("Content-type: text/xml");
@@ -25,6 +25,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)){
   $newnode->setAttribute("name", $row['name']);
   $newnode->setAttribute("lat", $row['lat']);
   $newnode->setAttribute("lng", $row['lng']);
+  $newnode->setAttribute("image", $row['image']);
 }
 
 echo $dom->saveXML();

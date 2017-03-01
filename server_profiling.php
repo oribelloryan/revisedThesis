@@ -17,6 +17,8 @@
 
     <!-- Custom styles for this template -->
     <link href="dist/css/starter-template.css" rel="stylesheet">
+
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
     <style>
     body{
       background-image:url('images/assets/bg-1.jpg');
@@ -59,8 +61,10 @@
           <option value="Theft">Theft</option>
         </select>
         <label>Image</label>
-        <input type="file" class="form-control" name="pic" required>
+        <center><img id="blah" alt="Image Preview" height="100px" width="100px"/></center>
+        <input type="file" class="form-control" name="pic" id="imgInp" required>
         <br>
+
         <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>
         </form>
       </div>
@@ -69,7 +73,23 @@
       </div>
     </div><!-- /.container -->
 
-
+    <script>
+      function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+        }
+    
+    $("#imgInp").change(function(){
+        readURL(this);
+    });
+    </script>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

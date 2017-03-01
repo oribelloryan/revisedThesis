@@ -97,7 +97,7 @@ function dateDifference($date1, $date2){
     <th>Operation</th>
     <th>Date Planned</th>
     <th>Date Executed</th>
-    <th>Executed</th>
+    <th>Executed (day/s ago)</th>
     </thead>
     <tbody>
     <?php
@@ -111,7 +111,7 @@ function dateDifference($date1, $date2){
              echo "<td><p>" .dateformatting($result['date_plan'])."</p></td>";
              echo "<td><p>" .dateformatting($result['date_execute'])."</p></td>";
      $neg = abs($diff);
-            echo "<td> $neg days ago</td>";
+            echo "<td><center>$neg</center></td>";
      echo "</tr></a>";
     }
     ?>

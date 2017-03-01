@@ -32,17 +32,21 @@
     <div class="navbar navbar-fixed-top" style="margin-top:-80px;">
       <center><img src="images/assets/header.png" style="width:400px;"></center>
     </div>
-
+    <a href="javascript:history.back()"><img src="images/assets/back.png" style="width:50px;" align="right"></a>
     <div class="container">
       <div class="col-xl-6" style="margin-top:-7%;" id='input_fields_wrap'>
         <h1 style="margin-bottom:3%">OFFICERS LIST</h1>
         <button class="add_field_button">Add More Fields</button>
-        <form action="server_storing.php" method="POST">
+        <br>
+        <br>
+        <form action="server_storing.php" method="POST" enctype="multipart/form-data">
                 <?php
                 $id = $_GET['checkpoint'];
                 echo "<input type='hidden' name='checkpoint' value=$id>";
                 ?>
-                <input type="file" name="pic">
+
+                <input type="file" name="pic" id='imgInp'>
+                <center><img id="blah" alt="Image Preview" height="100px" width="100px" ></center>
                 <input type="hidden" name="location" value="server_officer_designation">
             <div>
                 <select name="lead" class="form-control" style="width:20%;">
@@ -62,7 +66,7 @@
             </div>
             <!-- Officer 1-->
             <div class="wrapper">
-                <select name="title[]" class="form-control" style="width:20%;">
+                <select name="title[]" class="form-control" style="width:20%;" required>
                 <option value="SPO4">SPO4</option>
                 <option value="SPO3">SPO3</option>         
                 <option value="SPO2">SPO2</option>
@@ -73,7 +77,7 @@
                 <option value="PO1">PO1</option>
                 </select>
                 <input type="text" class="form-control" name="officer[]" placeholder="Enter Officer Name" style="margin-top:-7.25%;margin-left:22%;width:43%;" required>
-                <select name="designation[]" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;">
+                <select name="designation[]" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;" required="">
                 <option hidden>Checkpoint Position</option>
                 <option value="Spokeperson">Spokeperson</option>
                 <option value="Investigating">Investigating Sub-Team</option>
@@ -83,9 +87,13 @@
                 <!--Officer 1 End-->
                  <br>
             </div>
-                 <input type="text" class="form-control" name="vehicle" placeholder="Vehicle" style="margin-top:5%;margin-left:22%;width:43%;" required>
-                 <input type="text" class="form-control" name="contact" placeholder="Contact" style="margin-top:5%;margin-left:22%;width:43%;" required>
+            <div>
+                <label>Vehicle</label>
+                 <input type="text" class="form-control" name="vehicle" placeholder="Vehicle" style="width:43%;" required>
+                 <label>Team Leader's Contact</label>
+                 <input type="text" class="form-control" name="contact" placeholder="Contact" style="width:43%;" required>
                  <br>
+            </div>
             <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>
         </form>
       </div>
@@ -95,6 +103,23 @@
     </div><!-- /.container -->
     <script>
         $(document).ready(function() {
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    
+                    reader.onload = function (e) {
+                        $('#blah').attr('src', e.target.result);
+                    }
+                    
+                    reader.readAsDataURL(input.files[0]);
+                }
+                }
+            
+            $("#imgInp").change(function(){
+                readURL(this);
+            });
+
             var max_fields      = 10; //maximum input boxes allowed
             var wrapper         = $(".wrapper"); //Fields wrapper
             var add_button      = $(".add_field_button"); //Add button ID

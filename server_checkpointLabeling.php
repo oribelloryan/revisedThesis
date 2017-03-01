@@ -213,7 +213,7 @@
             });
     // https://interceptorpnp.000webhostapp.com/
             downloadUrlCheck('server_checkpoints_target.php/?id='+getUrl(), function(data) {
-            // console.log(data);
+            console.log(data);
                 var dataPass = JSON.parse(data);
                 for (var i = 0; i < dataPass.checkpoints.length; i++) {
                     var counter = dataPass.checkpoints[i];
@@ -223,8 +223,8 @@
                         lng: counter.lng * 1
                     };
                     var location = counter.location;
-
-                    createMarker(counter.id, point, infoWindow, counter.name, map, location);
+                    var has_composition = counter.has_composition;
+                    createMarker(counter.id, point, infoWindow, counter.name, map, location, has_composition);
                 }
            
         });
@@ -258,8 +258,16 @@
         window.location = 'server_officer_designation.php?checkpoint='+e.getAttribute('data-check');
       }
 
-      function createMarker(checkpointId, point, infoWindow, name, map, loc){
+      function createMarker(checkpointId, point, infoWindow, name, map, loc, has){
           var contentString;
+          if(has == 'yes'){
+          contentString = $('<div class="marker-info-win">'+
+          '<div class="marker-inner-win"><span class="info-content">'+
+          '<h6 class="marker-heading">Location:'+loc+'</h6>'+
+          '<h6 class="marker-heading-id" value='+checkpointId+'>Checkpoint Id:'+checkpointId+'</h6>'+ 
+          '<div class="marker-data" align="center"><h6 class="editNameTxt">Name: '+name+'</h6><button style="background-color:#bd593d;color:#ffffff;" class="editName">Edit Name</button>'+
+          '</div></span></div></div>');    
+         }else{
           contentString = $('<div class="marker-info-win">'+
           '<div class="marker-inner-win"><span class="info-content">'+
           '<h6 class="marker-heading">Location:'+loc+'</h6>'+
@@ -267,7 +275,8 @@
           '<div class="marker-data" align="center"><h6 class="editNameTxt">Name: '+name+'</h6><button style="background-color:#bd593d;color:#ffffff;" class="editName">Edit Name</button>'+
           '<button style="background-color:#bd593d;color:#ffffff;" class="addOfficer" data-check='+checkpointId+' onClick="addOfficerFn(this)">Add Officer</button>'+
           '</div></span></div></div>');    
-
+         }
+         
            var image = {
             url: 'images/assets/baricade2.png', // image is 512 x 512
             scaledSize: new google.maps.Size(27,27), // scaled size

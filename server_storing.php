@@ -14,6 +14,7 @@
 
 		$commit = $conn->query($sql_insert);
 		header('location: server_profiling.php');
+
 	}else if($_POST['location'] == "server_profiling"){
 		
 		$name = $_POST['target_name'];
@@ -43,6 +44,7 @@
 		$result = $conn->query($sql);
 
 		echo "Data have been saved";
+
 	}else if($_POST['location'] == "server_officer_profiling"){
 		$name = $_POST['name'];
 		$age = $_POST['age'];
@@ -60,6 +62,7 @@
 		$sql = "INSERT INTO police_profiling (name, age, gender, height, position, image) VALUES ('$name', '$age', '$gender', '$height', '$position', '$target_file')";
 		$query = $conn->query($sql);
 		header('location: index.php');
+
 	}else if($_POST['location'] == "server_officer_designation"){
 		$lead = $_POST['lead'];
 		$lead_name = $_POST['lead_name'];
@@ -68,11 +71,23 @@
 		$name = $_POST['officer'];
 		$desig = $_POST['designation'];
 		$id = $_POST['checkpoint'];
-		$operation->add_officer($id, $lead, $lead_name, $lead_pos, '2324', 'MC 421D' );
+		$vehicle = $_POST['vehicle'];
+		$contact = $_POST['contact'];
+
+		$imageFileType = pathinfo( $_FILES['pic']['name'], PATHINFO_EXTENSION);
+		$target_dir = "images/polices/";
+		$target_file = $target_dir . $id . '.'.$imageFileType ;
+
+		$pic = $_FILES['pic']['tmp_name'];
+		move_uploaded_file($pic, $target_file);
+
+		$operation->add_officer($id, $lead, $lead_name, $lead_pos, $contact, $vehicle, $target_file );
 		for($i = 0; $i < sizeof($title); $i++){
-			$operation->add_officer($id, $title[$i], $name[$i], $desig[$i], '2324', 'MC 421D' );
+			$operation->add_officer($id, $title[$i], $name[$i], $desig[$i], $contact, $vehicle, 'no image' );
 
 		}
+
+		$update = $conn->query("UPDATE checkpoints SET has_composition = 'yes' WHERE id = $id");
 		header('location: server_checkpointLabeling.php?operation_id='.$operation->get_id());
 	}		
 ?>

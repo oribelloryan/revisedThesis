@@ -57,7 +57,7 @@ $stmt= $conn->query("SELECT MAX(operation_id) as id FROM tbl_operations");
         <!-- <label>Number of Officers Required</label>
         <input type="number" class="form-control" name="num_officers" required> -->
         <br>
-        <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Proceed to Plotting</button><button onClick='backFn()' class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Cancel Plan</button>
+        <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Proceed to Profiling</button><button onClick='backFn()' class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13.5%;">Cancel Plan</button>
         </form>
       </div>
       <div class="col-lg-6">
