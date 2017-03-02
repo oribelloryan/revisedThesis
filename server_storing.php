@@ -83,7 +83,7 @@
 
 		$operation->add_officer($id, $lead, $lead_name, $lead_pos, $contact, $vehicle, $target_file );
 		for($i = 0; $i < sizeof($title); $i++){
-			$operation->add_officer($id, $title[$i], $name[$i], $desig[$i], $contact, $vehicle, 'no image' );
+			$operation->add_officer($id, $title[$i], $name[$i], $desig[$i], '', '', 'no image' );
 
 		}
 

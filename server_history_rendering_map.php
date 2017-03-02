@@ -1,3 +1,6 @@
+<?php
+  include('db_conn.php');
+?>
 <!DOCTYPE html> 
 <html lang="en">
   <head>
@@ -18,26 +21,22 @@
     <link href="dist/css/starter-template.css" rel="stylesheet">
     <script src="dist/js/sweetalert-dev.js"></script>
     <link rel="stylesheet" href="dist/css/sweetalert.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    
+    <style>
+    #map{
+         width: 100%;
+         height: 550px; 
+         margin: auto;
+         }
+    #target{
+      visibility: hidden;
 
-    </script>
-  <style>
-  #map{
-       width: 100%;
-       height: 550px; 
-       margin: auto;
-       }
-  #target{
-    visibility: hidden;
-
-  }
-  #checkpoints{
-    visibility: hidden;
-  }
-  </style>
-
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous">
-      </script>
-
+    }
+    #checkpoints{
+      visibility: hidden;
+    }
+    </style>
   </head>
 
   <body>
@@ -57,6 +56,64 @@
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Date Executed: </p><span id="date_executed"></span>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Number of checkpoint(s): </p><p id="num_officers" style="margin-bottom:20px;"></p>
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Target Location: </p><p id="location" style="margin-bottom:20px;"></p>
+    <div id="tableDiv">
+    <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Checkpoint Composition and Location </p>
+    <?php
+      $id = $_GET['operation_id'];
+      $sql = "SELECT * FROM tbl_operations AS t JOIN criminal_profiling AS cp ON t.operation_id = cp.operation_id JOIN checkpoints AS c ON t.operation_id = c.operation_id JOIN checkpoint_composition AS cc ON c.id = cc.checkpoint_id WHERE t.operation_id = $id";
+      $result = $conn->query($sql);
+      // $row = $result->fetch(PDO::FETCH_ASSOC);
+      echo "<table id='tableId'>";
+      // echo "<thead>";
+      echo "<tr style='display:none;' data-tableexport-display='always'>";
+      echo "<th><center>Republic of the Philippines<br>
+      PHILIPPINE NATIONAL POLICE<br>
+      EASTERN POLICE DISTRICT<br>
+      SAN JUAN CITY POLICE STATION<br>
+      Santolan Road, City of San Juan</center></th>";
+      echo "<th>Date Executed:<p id='pdf_date_executed'></p></th>";
+      echo "</tr>";
+      echo "<tr>";
+      echo "<th>Location</th>";
+      echo "<th>Composition</th>";
+      echo "<th>Designation</th>";
+      echo "<th>Contact</th>";
+      echo "<th>Marked Vehicle</th>";
+      echo "</tr>";
+      // echo "</thead>";
+      // echo "<tbody>";
+      while($r = $result->fetch(PDO::FETCH_ASSOC)){
+      echo "<tr>";
+      echo "<td>".$r['location']."</td>";
+      echo "<td>".$r['title']." ".$r['name']."</td>";
+      echo "<td>".$r['designation']."</td>";
+      echo "<td>".$r['contact']."</td>";
+      echo "<td>".$r['marked_vehicle']."</td>";
+      echo "</tr>";
+      }
+      // echo "</tbody>";
+      echo "</table>";
+    ?>
+    </div>
+    <div>
+    <label>Generate: </label>
+    <a href="#" id="generateBtn"> CSV</a>
+    <a href="#" id="newGenearateBtn" onClick="doExport('#tableId',
+                      {type: 'pdf',
+                      fileName:  'Operation_'+document.getElementById('operation_name').innerHTML,
+                      theadSelector: 'tr',
+                      htmlContent: false,
+                        jspdf: {orientation: 'l',
+                          margins: {right: 10, left: 10, top: 10, bottom: 40},
+                          autotable: {
+                          styles: {overflow: 'linebreak'},
+                          tableWidth: 'wrap',
+                         headerStyles: {fillColor: [52, 73, 94],
+                                textColor: 255,
+                                fontStyle: 'bold',
+                                halign: 'center' }
+                          }}});">PDF</a>
+    </div>
     <div id="map" ></div>
     <div id="formradius">
     <!-- <input type="number" id="radiussize"> -->
@@ -64,7 +121,30 @@
     </div>
     </div><!-- /.container -->
     <script src="js/boundary.js"></script>
+
     <script type="text/javascript">
+     function doExport(selector, params) {
+      var options = {
+        //ignoreRow: [1,11,12,-2],
+        //ignoreColumn: [0,-1],
+        //pdfmake: {enabled: true},
+        tableName: 'Operation_'+document.getElementById('operation_name').innerHTML,
+        worksheetName: 'Operation_'+document.getElementById('operation_name').innerHTML
+      };
+
+      $.extend(true, options, params);
+
+      $(selector).tableExport(options);
+    }
+
+    $('#generateBtn').click(function(){
+        $("#tableId").tableExport();
+    });
+   
+    // $('#newGenearateBtn').click(function(){
+    //     $("tableId").tableExport({type: 'pdf'});
+    // });
+
     var radiusSize = 0;
     var policeMarkers = [];
     var checkpointMarkers = [];
@@ -103,6 +183,7 @@
           document.getElementById('date_executed').innerHTML = parsed.date_execute;
           document.getElementById('num_officers').innerHTML = parsed.officers;
           document.getElementById('location').innerHTML = parsed.location;
+          document.getElementById('pdf_date_executed').innerHTML = parsed.date_execute;
         }
         });
     var minZoomLevel = 15;
@@ -365,5 +446,18 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
     <script src="dist/js/bootstrap.min.js"></script>
+
+    <!-- <script src="js/FileSaver.js"></script>
+    <script src="js/tableexport.js"></script> -->
+    <script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
+    <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
+    <!--
+    <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
+    <script type="text/javascript" src="../libs/pdfmake/vfs_fonts.js"></script>
+    -->
+    <script type="text/javascript" src="libs/jsPDF/jspdf.min.js"></script>
+    <script type="text/javascript" src="libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+    <script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"></script>
+    <script type="text/javascript" src="tableExport.js"></script>
   </body>
 </html>
