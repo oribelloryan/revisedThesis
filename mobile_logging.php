@@ -1,4 +1,5 @@
 <?php
+	header('Access-Control-Allow-Origin: *');
 	include('db_conn.php');
 
 	$operation = $_POST['name'];

@@ -71,7 +71,8 @@
       EASTERN POLICE DISTRICT<br>
       SAN JUAN CITY POLICE STATION<br>
       Santolan Road, City of San Juan</center></th>";
-      echo "<th>Date Executed:<p id='pdf_date_executed'></p></th>";
+      echo "<th>Date Executed:<p id='pdf_date_executed'></p> </th>";
+      echo "<th>Mission Completed: <p id='pdf_mission'></p> </th>";
       echo "</tr>";
       echo "<tr>";
       echo "<th>Location</th>";
@@ -83,14 +84,34 @@
       // echo "</thead>";
       // echo "<tbody>";
       while($r = $result->fetch(PDO::FETCH_ASSOC)){
-      echo "<tr>";
-      echo "<td>".$r['location']."</td>";
-      echo "<td>".$r['title']." ".$r['name']."</td>";
-      echo "<td>".$r['designation']."</td>";
-      echo "<td>".$r['contact']."</td>";
-      echo "<td>".$r['marked_vehicle']."</td>";
-      echo "</tr>";
+        $data[] = $r;
       }
+
+      for($i = 0; $i < sizeof($data); $i++){
+      if($i == 0){
+         $past = $data[$i]['location'];
+      }else{
+         $past = $data[$i - 1]['location'];
+      }
+     
+      echo "<tr>";
+      if($data[$i]['location'] == $past && $i > 0){
+      echo "<td></td>";
+      echo "<td>".$data[$i]['title']." ".$data[$i]['name']."</td>";
+      echo "<td>".$data[$i]['designation']."</td>";
+      echo "<td></td>";
+      echo "<td></td>";
+      }else if($data[$i]['location'] != $past || $i == 0){
+      echo "<td>".$data[$i]['location']."</td>";
+      echo "<td>".$data[$i]['title']." ".$data[$i]['name']."</td>";
+      echo "<td>".$data[$i]['designation']."</td>";
+      echo "<td>".$data[$i]['contact']."</td>";
+      echo "<td>".$data[$i]['marked_vehicle']."</td>";
+      }
+
+      }
+      
+      echo "</tr>";
       // echo "</tbody>";
       echo "</table>";
     ?>
@@ -107,7 +128,7 @@
                           margins: {right: 10, left: 10, top: 10, bottom: 40},
                           autotable: {
                           styles: {overflow: 'linebreak'},
-                          tableWidth: 'wrap',
+                          tableWidth: 'auto',
                          headerStyles: {fillColor: [52, 73, 94],
                                 textColor: 255,
                                 fontStyle: 'bold',
@@ -184,6 +205,7 @@
           document.getElementById('num_officers').innerHTML = parsed.officers;
           document.getElementById('location').innerHTML = parsed.location;
           document.getElementById('pdf_date_executed').innerHTML = parsed.date_execute;
+          document.getElementById('pdf_mission').innerHTML = parsed.mission;
         }
         });
     var minZoomLevel = 15;

@@ -197,6 +197,11 @@
                     var text = document.createElement('text');
                     text.textContent = name
                     infowincontent.appendChild(text);
+                    
+                    if(imageSrc == ''){
+                      imageSrc = 'images/assets/crosshair.png';
+                    }
+
                     var image = {
                         url: imageSrc,
                      // size: new google.maps.Size(71, 71),
