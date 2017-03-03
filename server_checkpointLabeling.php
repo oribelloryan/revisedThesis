@@ -96,6 +96,7 @@
       <center><img src="images/assets/header.png"" style="width:400px;"></center>
     </div>
     <div class="modal"></div>
+
     <a href="index.php"><img src="images/assets/home.png" style="width:50px;" align="right"></a>
     <div class="container" style="margin-top:50px;">    
       <p><h4 style="text-transform:uppercase;"><center>Operation :</p><p id="operation_name" style="text-decoration:underline;color:#317fba;text-transform:capitalize;"></p></center></h4>
@@ -104,6 +105,7 @@
       <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Target Location: </p><p id="location" style="margin-bottom:20px;"></p>
       <div>
       <img src="images/assets/header.png" style="width:35px;height:35px;visibility:hidden" id="img">
+      <button  id='officerCompositionBtn' class="btn pull-right btn-default " style="background-color:#bd593d;color:#ffffff;width:20%;margin-top:10px;margin-left: 80%">Add officer composition</button>
       </div>
       <div id="map" ></div>
     </div><!-- /.container -->
@@ -121,7 +123,9 @@
             return id;
         }
         
-
+        document.getElementById('officerCompositionBtn').onclick = function(){
+          window.location = 'server_officer_designation.php?id='+oppId;
+        };
 
         var oppId = getUrl();
         var target;

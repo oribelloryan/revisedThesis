@@ -24,6 +24,15 @@
       background-color:#fbfbfb;
       background-position:center;
     }
+
+    .container1{
+      margin-left:8%;
+      margin-top:1%;
+    }
+    .container{
+      margin-top:0%;
+    }
+
     </style>
   </head>
 
@@ -46,28 +55,31 @@
 
     <div class="container">
     <center>
-      <div class="col-lg-3">
+      <div class="col-lg-4">
         <a href="server_create_plan.php"><img src="images/assets/new_plan.png" class="icons"></a>
         <p class="lead">Create New Plan</p>
       </div>
-      <div class="col-lg-3">
+      <div class="col-lg-4">
         <a href="server_view_plan.php"><img src="images/assets/view_btn.png" class="icons"></a>
         <p class="lead">View Operations</p>
       </div>
-      <div class="col-lg-3">
+      <div class="col-lg-4">
         <a href="server_history.php"><img src="images/assets/history.png" class="icons">
         </a><p class="lead">Operations History</p>
       </div>
-     <!--  <div class="col-lg-3">
-        <a href="server_officer_profiling.php"><img src="images/assets/add.png" class="icons"></a>
+      </center>
+      </div>
+      <div class="container1">
+      <center>
+      <div class="col-lg-4">
+        <a href="server_officer_profiling.php"><img src="images/assets/add1.png" class="icons"></a>
         <p class="lead">Add police</p>
-      </div> -->
-      <div class="col-lg-3">
+      </div>
+      <div class="col-lg-4" style="margin-left:25%;">
         <a href="server_about.php"><img src="images/assets/settings.png" class="icons"></a>
         <p class="lead">About</p>
       </div>
     </center>
-
     </div><!-- /.container -->
 
 
