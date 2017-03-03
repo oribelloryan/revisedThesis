@@ -46,22 +46,32 @@
 		echo "Data have been saved";
 
 	}else if($_POST['location'] == "server_officer_profiling"){
-		$name = $_POST['name'];
-		$age = $_POST['age'];
+		$lname = $_POST['lname'];
+		$fname = $_POST['fname'];
+		$mname = $_POST['mname'];
+		$address = $_POST['address'];
 		$height = $_POST['height'];
+		$birthday = $_POST['bday'];
 		$gender = $_POST['gender'];
 		$position = $_POST['position'];
-		
+
+		$sql = "INSERT INTO police_profiling (last_name, first_name, middle_name, birthday, gender, height, position) VALUES ('$lname', '$fname', '$mname', '$birthday', '$gender', '$height', '$position')";
+		$conn->exec($sql);
+
+		$id = $conn->lastInsertId();
+
 		$p = $_FILES['police']['name'];
 		$imageFileType = pathinfo( $_FILES['police']['name'], PATHINFO_EXTENSION);
 		$target_dir = "images/polices/";
-		$target_file = $target_dir . $name . '.'.$imageFileType ;
+		$target_file = $target_dir . $id . '.'.$imageFileType ;
 
 		$pic = $_FILES['police']['tmp_name'];
 		move_uploaded_file($pic, $target_file);
-		$sql = "INSERT INTO police_profiling (name, age, gender, height, position, image) VALUES ('$name', '$age', '$gender', '$height', '$position', '$target_file')";
-		$query = $conn->query($sql);
-		header('location: index.php');
+
+		$update = "UPDATE police_profiling SET image = '$target_file' WHERE id = $id";
+		$conn->exec($update);
+
+		echo "Data Saved!";
 
 	}else if($_POST['location'] == "server_officer_designation"){
 		$lead = $_POST['lead'];

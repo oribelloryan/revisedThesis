@@ -55,11 +55,11 @@ img.icons{
 }
 
 img.icons:hover{
-	height: 45%;
+	height: 43%;
 	width: 55%;
 	transition: width 2s, height 2s;
 }
 
 .container{
-	margin-top:10%;
+	margin-top:5%;
 }
