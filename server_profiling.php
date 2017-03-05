@@ -39,33 +39,33 @@
       <div class="col-lg-6" style="margin-top:-5%;">
         <h1>TARGET PERSON DETAILS</h1>
         <form action="server_storing.php" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="location" value="server_profiling"/>
-        <label>Full Name</label>
-        <input type="text" class="form-control" name="target_name" required>
-        <label>Age</label><label style="margin-left:45%;">Gender</label>
-        <input type="text" class="form-control" name="target_age" style="width:45%;" required>
-        <select name="target_gender" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;">
-        <option hidden>Select Gender</option>
-        <option value="Female">Female</option>    
-        <option value="Male">Male</option>                  
-        </select>
-        <label>Height</label><label style="margin-left:42%;">Committed Crime</label>
-        <input type="text" class="form-control" name="target_height" style="width:45%;" required>
-        <select name="target_crime" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;" required>
-          <option hidden>Select Crime</option>
-          <option value="Drug Possession">Drug Possession</option>
-          <option value="Kidnapping">Kidnapping</option>
-          <option value="Murder">Murder</option>
-          <option value="Rape">Rape</option>
-          <option value="Robbery">Robbery</option>
-          <option value="Theft">Theft</option>
-        </select>
-        <label>Image</label>
-        <center><img id="blah" alt="Image Preview" height="100px" width="100px"/></center>
-        <input type="file" class="form-control" name="pic" id="imgInp" required>
-        <br>
+          <input type="hidden" name="location" value="server_profiling"/>
+          <label>Full Name</label>
+          <input type="text" class="form-control" name="target_name" required>
+          <label>Age</label><label style="margin-left:45%;">Gender</label>
+          <input type="text" class="form-control" name="target_age" style="width:45%;" required>
+          <select name="target_gender" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;">
+          <option hidden>Select Gender</option>
+          <option value="Female">Female</option>    
+          <option value="Male">Male</option>                  
+          </select>
+          <label>Height</label><label style="margin-left:42%;">Committed Crime</label>
+          <input type="text" class="form-control" name="target_height" style="width:45%;" required>
+          <select name="target_crime" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;" required>
+            <option hidden>Select Crime</option>
+            <option value="Drug Possession">Drug Possession</option>
+            <option value="Kidnapping">Kidnapping</option>
+            <option value="Murder">Murder</option>
+            <option value="Rape">Rape</option>
+            <option value="Robbery">Robbery</option>
+            <option value="Theft">Theft</option>
+          </select>
+          <label>Image</label>
+          <center><img id="blah" alt="Image Preview" height="100px" width="100px"/></center>
+          <input type="file" class="form-control" name="pic" id="imgInp" required>
+          <br>
 
-        <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>
+          <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>
         </form>
       </div>
       <div class="col-lg-6">
