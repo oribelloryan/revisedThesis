@@ -48,31 +48,39 @@
       
          <!--  -->
         <?php
-        ?>
-        <section id="section01" class="form-control" style="width:100%">
-          <h4>Checkpoint #1</h4>
-          <h6>Checkpoint name: chcpt1</h6>
-          <span style="margin-left:90px;"></span><a href="#section02" style="margin-left:350px;">Next</a>
-          <button class="add_field_button">Add More Fields</button>
-          <form action="server_storing.php" method="POST" enctype="multipart/form-data">
-                <?php
+        $sql = "SELECT * FROM checkpoints WHERE operation_id = $id"; 
+        $result = $conn->query($sql);
+        $counter = 1;
+        echo  '<form action="#" method="POST">';
+        while($checkpts = $result->fetch(PDO::FETCH_ASSOC)){
+         
+        echo '<section id="section01" class="form-control" style="width:100%">';
+        echo '<span style="margin-left:90px;"></span><a href="#section02" style="margin-left:350px;">Next</a>';
+        echo '<h4>Checkpoint #'.$counter.'</h4>';
+        echo '<h5>Checkpoint name: '.$checkpts['name'].'</h5>';
+        echo '<h6>Location: '.$checkpts['location'].'</h6>';
+       
+        echo  '<button class="add_field_button">Add More Fields</button>';
+       
+    
                 $id = $_GET['id'];
                 echo "<input type='hidden' name='checkpoint' value=$id>";
-                ?>
+                echo  '<input type="hidden" name="location" value="server_officer_designation">';
+        
                 
-                <center><img id="blah" alt="Image Preview" height="100px" width="100px" ></center>
-                <input type="hidden" name="location" value="server_officer_designation">
-            <div>
-                <select name="lead" class="form-control" style="width:20%;" disabled>
-                <option value="PSINSP">PSINP</option>    
-                <option value="PINSP">PINSP</option>
-                <option value="SPO4">SPO4</option>
-                <option value="SPO3">SPO3</option>         
-                <option value="SPO2">SPO2</option>
-                <option value="SPO1">SPO1</option>
-                </select>
-              <?php
-               $sql = "SELECT * FROM tbl_operations WHERE operation_id = $id"; 
+                echo  '<center><img id="blah" alt="Image Preview" height="100px" width="100px" ></center>';
+               
+                echo  '<div>';
+                echo  '<select name="lead" class="form-control" style="width:20%;" disabled>';
+                echo  '<option value="PSINSP">PSINP</option>';
+                echo  '<option value="PINSP">PINSP</option>';
+                echo  '<option value="SPO4">SPO4</option>';
+                echo  '<option value="SPO3">SPO3</option>';         
+                echo  '<option value="SPO2">SPO2</option>';
+                echo  '<option value="SPO1">SPO1</option>';
+                echo  '</select>';
+              
+               
                $police = $conn->query("SELECT * FROM police_profiling WHERE position IN ('PSINSP', 'PINSP')");
                $i = 0;
                while($p = $police->fetch(PDO::FETCH_ASSOC)){
@@ -89,28 +97,27 @@
                 echo "<option value=".$leader[$i]['id']." data-img=".$leader[$i]['image']." data-position=".$leader[$i]['position'].">".$leader[$i]['name']."</option>";
                 }
                 echo "</select>";
-                ?>
-               <!--  <input type="text" class="form-control" name="lead_name" placeholder="Enter Full Name" style="margin-top:-7.25%;margin-left:22%;width:43%;" required> -->
-                <select name="lead_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;" required>
-                <option value="" hidden>Checkpoint Position</option>
-                <option value="Team Leader">Team Leader</option>
-                </select>
-                <br>
-            </div>
-            <!-- Officer 1-->
-            <div class="wrapper">
-                <select name="title[]" class="form-control" style="width:20%;" required disabled>
-                <option value="SPO4">SPO4</option>
-                <option value="SPO3">SPO3</option>         
-                <option value="SPO2">SPO2</option>
-                <option value="SPO1">SPO1</option>
-                <option value="PO4">PO4</option>
-                <option value="PO3">PO3</option>
-                <option value="PO2">PO2</option>
-                <option value="PO1">PO1</option>
-                </select>
-                <!-- <input type="text" class="form-control" name="officer[]" placeholder="Enter Officer Name" style="margin-top:-7.25%;margin-left:22%;width:43%;" required> -->
-               <?php
+                
+               
+                echo  '<select name="lead_pos" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;" required>';
+                echo  '<option value="" hidden>Checkpoint Position</option>';
+                echo  '<option value="Team Leader">Team Leader</option>';
+                echo  '</select>';
+                echo  '<br>';
+                echo  '</div>';
+           
+                echo  '<div class="wrapper">';
+                echo  '<select class="form-control" style="width:20%;" required disabled>';
+                echo  '<option value="SPO4">SPO4</option>';
+                echo  '<option value="SPO3">SPO3</option>';         
+                echo  '<option value="SPO2">SPO2</option>';
+                echo  '<option value="SPO1">SPO1</option>';
+                echo  '<option value="PO4">PO4</option>';
+                echo  '<option value="PO3">PO3</option>';
+                echo  '<option value="PO2">PO2</option>';
+                echo  '<option value="PO1">PO1</option>';
+                echo  '</select>';
+              
                $sql = "SELECT * FROM tbl_operations WHERE operation_id = $id"; 
                $group = $conn->query("SELECT * FROM police_profiling WHERE position NOT IN ('PSINSP', 'PINSP')");
                $i = 0;
@@ -128,26 +135,29 @@
                 echo "<option value=".$team[$i]['id']." data-img=".$team[$i]['image']." data-position=".$team[$i]['position'].">".$team[$i]['name']."</option>";
                 }
                 echo "</select>";
-                ?>
-                <select name="designation[]" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;" required="">
-                <option hidden>Checkpoint Position</option>
-                <option value="Spokeperson">Spokeperson</option>
-                <option value="Investigating">Investigating Sub-Team</option>
-                <option value="Search">Search/Arresting Sub-Team</option>
-                <option value="Security">Security Sub-Team</option>
-                </select>
-                <!--Officer 1 End-->
-                 <br>
-            </div>
-            <div>
-                <label>Vehicle</label>
-                 <input type="text" class="form-control" name="vehicle" placeholder="Vehicle" style="width:43%;" required>
-                 <br>
-            </div>
-            <button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>
-        </form>
-        </section>
-
+                echo  '<select name="designation[]" class="form-control" style="width:38%;margin-top:-7.25%;margin-left:67%;" required="">';
+                echo  '<option hidden>Checkpoint Position</option>';
+                echo  '<option value="Spokeperson">Spokeperson</option>';
+                echo  '<option value="Investigating">Investigating Sub-Team</option>';
+                echo  '<option value="Search">Search/Arresting Sub-Team</option>';
+                echo  '<option value="Security">Security Sub-Team</option>';
+                echo  '</select>';
+              
+                 echo  '<br>';
+            echo  '</div>';
+            echo  '<div>';
+                echo  '<label>Vehicle</label>';
+                 echo  '<input type="text" class="form-control" name="vehicle" placeholder="Vehicle" style="width:43%;" required>';
+                 echo  '<br>';
+            echo  '</div>';
+            
+        
+        echo  '</section>';
+        $counter++;
+        }
+        echo  '<button type="submit" class="btn btn-default" name="submit" style="background-color:#2b3f6d;color:#ffffff;width:40%;">Submit</button><button type="reset" class="btn btn-default" name="cancel" style="background-color:#2b3f6d;color:#ffffff;width:40%;margin-left:45%;margin-top:-13%;">Reset</button>';
+        echo  '</form>';
+        ?>
         <section id="section02" class="form-control">
           <a href="#section03"><span></span>Next Checkpoint</a>
         </section>
@@ -167,7 +177,8 @@
         <center><img src="images/assets/pnp.png" alt="pnp_logo" style="width:60%;margin-left:30%;opacity:0.75;margin-top:-5%;"></center>
       </div>
     </div><!-- /.container -->
-
+      <!-- <input type="text" class="form-control" name="officer[]" placeholder="Enter Officer Name" style="margin-top:-7.25%;margin-left:22%;width:43%;" required> -->
+    <!--  <input type="text" class="form-control" name="lead_name" placeholder="Enter Full Name" style="margin-top:-7.25%;margin-left:22%;width:43%;" required> -->
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -178,8 +189,9 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
     <script>
-      function readURL(input) {
-                $('#blah').attr('src',input);
+      function readURL(input, before) {
+                $(before).attr('src',input);
+                console.log(before.before());
                 }
                 
       function setPosition(input, before){
@@ -188,15 +200,15 @@
                 $(before).val(input).change();
       }
 
-      $("select[name=leaderName]").change(function(){
+        $("select[name=leaderName]").change(function(){
                 var h = $('select[name=leaderName] option:selected').attr('data-img');
                 var p = $('select[name=leaderName] option:selected').attr('data-position');
-                readURL(h);
+                readURL(h, $(this).before()[0].previousElementSibling);
                 setPosition(p, $(this).before()[0].previousElementSibling);
                 // console.log(p);
                 console.log($(this).before()[0].previousElementSibling);
                 console.log(h);
-            });
+        });
 
         $("select[name^=groupMembers]").change(function(){
                 // var h = $('select[name^=groupMembers] option:selected').attr('data-img');
@@ -205,31 +217,30 @@
                 setPosition(p, $(this).before()[0].previousElementSibling);
                 // console.log(p);
                 console.log($(this).before());
-                console.log(h);
-            });
+                // console.log(h);
+        });
 
-      function groupMembersfn(input){
-            
-      }
-
-      $('#officerForm').
-      submit( function( e ){
-        $.ajax({
-        url: 'server_storing.php',
-        type: 'POST',
-        data: new FormData(this),
-        processData: false,
-        contentType: false,
-        success: function(data){
-          swal(data);
-          document.getElementById("officerForm").reset();
-          document.getElementById('blah').src = '';
+        function groupMembersfn(input){
+              
         }
-      })
-        e.preventDefault();
-      });
 
-
+        $('#officerForm').
+        submit( function( e ){
+          console.log(new FormData(this));
+        //   $.ajax({
+        //   url: 'server_storing.php',
+        //   type: 'POST',
+        //   data: new FormData(this),
+        //   processData: false,
+        //   contentType: false,
+        //   success: function(data){
+        //     swal(data);
+        //     document.getElementById("officerForm").reset();
+        //     document.getElementById('blah').src = '';
+        //   }
+        // })
+          e.preventDefault();
+        });
     </script>
   </body>
 </html>

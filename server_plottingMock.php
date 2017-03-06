@@ -154,7 +154,7 @@
 
       if(markers.length < 1){ 
          
-         // displayRoute(location, locationAddress, directionsService, directionsDisplay);
+         displayRoute(location, locationAddress, directionsService, directionsDisplay);
 
         marker = new google.maps.Marker({
           position: location,
@@ -361,7 +361,6 @@
         var mapradius = radiusSize*.0000100;
         var xcor;
         var ycor;
-        
         for (ctr=0;ctr<360;){
             xcor = location.lat() + (mapradius*Math.cos(ctr));
             ycor = location.lng() + (mapradius*Math.sin(ctr));
