@@ -400,6 +400,7 @@
             url: "server_plottingMockAjax.php",
             data: {
                 markers: markerSaving
+                +
             },
             success: function(msg){ 
               if(msg == "Data have been saved"){

@@ -47,7 +47,7 @@
         <input type="text" class="form-control" name="mname" placeholder="Middle Name" style ="width:32%;margin-top:-7.25%;margin-left:68%;" required>
         <label>Home Address</label>
         <input type="text" class="form-control" name="address" required>
-        <label>Height (cm)</label><label style="margin-left:35%;">Gender</label>
+        <label>Contact</label><label style="margin-left:35%;">Gender</label>
         <input type="text" class="form-control" name="height" style="width:45%;" required>
         <select name="gender" class="form-control" style="width:50%;margin-top:-7.25%;margin-left:50%;">
         <option hidden>Select Gender</option>
@@ -107,7 +107,7 @@
             $("#imgInp").change(function(){
                 readURL(this);
             });
-
+            
       $('#officerForm').
       submit( function( e ){
         $.ajax({

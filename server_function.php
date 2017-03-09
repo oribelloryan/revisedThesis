@@ -19,16 +19,13 @@
 			$this->id = $row['id'];
 		}
 
-		function add_officer($id, $title, $name, $designation, $con, $marked, $image){
-			$sql = "INSERT INTO checkpoint_composition(checkpoint_id, title, name, designation, contact, marked_vehicle, image) VALUES (:id, :title, :name, :desig, :con, :marked, :img)";
+		function add_officer($id, $name, $designation, $marked){
+			$sql = "INSERT INTO checkpoint_composition(checkpoint_id, police_id, designation, marked_vehicle) VALUES (:id, :name, :desig, :marked)";
 			$result = $this->conn->prepare($sql);
 			$result->bindValue(':id', $id);
-			$result->bindValue(':title', $title);
 			$result->bindValue(':name', $name);
 			$result->bindValue(':desig', $designation);
-			$result->bindValue(':con', $con);
 			$result->bindValue(':marked', $marked);
-			$result->bindValue(':img', $image);
 			$result->execute();
 
 		}

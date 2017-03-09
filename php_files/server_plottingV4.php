@@ -75,11 +75,7 @@
     var radiusSize = 0;
     var markers = [];
     var locations = [];
-    var perimeterArray = [];
-    var perimeter;
-    var circle;
     var poly;
-
     function changeradius(){
         radiusSize=document.getElementById("radiussize").value;
         if(radiusSize < 250 ){
@@ -118,21 +114,6 @@
       return markersPosition;
     }
 
-    function addPerimeter(loc){
-      circle = new google.maps.Circle({
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            // map: map,
-            center: loc,
-            radius: radiusSize * 1        
-          });
-      perimeterArray.push(circle);
-  }
-
-
     function deleteMarker() {
         swal({
         title: "Are you sure?",
@@ -147,7 +128,6 @@
         function(){
           swal("Deleted!", "Change target", "success");
           clearMarkers();
-          perimeterArray = [];
           markers = [];
         } );
       }
@@ -156,17 +136,12 @@
         setMapOnAll(null);
       }
 
-    function locationPass(e) {
-      return e.lat+','+e.lng;
-    }
-
     function setMapOnAll(map){
       var i; 
       var length = markers.length;
       for(i=0; i < length; i++){
         markers[i].setMap(map);
       }
-      perimeterArray[0].setMap(map);
     }
 
     var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -218,6 +193,9 @@
 
       }
      
+      
+      
+
     }else{
 
     }
@@ -227,7 +205,7 @@
     function snapToRoad(data){
       var lat;
       var lng;
-      $.get( "https://roads.googleapis.com/v1/nearestRoads?points="+locationPass(data)+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI", function( msg ) {
+      $.get( "https://roads.googleapis.com/v1/nearestRoads?points="+data+"&key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI", function( msg ) {
         lat = msg.snappedPoints[0].location.latitude;
         lng = msg.snappedPoints[0].location.longitude;
         var image = {
@@ -249,7 +227,7 @@
     function initMap(){
         var minZoomLevel = 15;
         var centeroftheearth = {lat: 14.600353, lng: 121.036745};
-         
+       
 
         directionsService = new google.maps.DirectionsService;
         directionsDisplay = new google.maps.DirectionsRenderer;
@@ -330,8 +308,6 @@
 
         boundaryLine.setMap(map);
 
-     
-
         google.maps.event.addListener(map, 'click', function(event) {
           var isOfCity =  google.maps.geometry.poly.containsLocation(event.latLng,boundary);
           if(markers.length < 1){
@@ -350,11 +326,8 @@
                     function(isConfirm){
                       if (isConfirm){
                         swal("Targeted!", "", "success");
-                         addPerimeter(event.latLng);
-                          circle.setMap(map);
-      circle.addListener('click', function(){
-        alert("cicrlce");
-      });
+                          addMarker(event.latLng, map);
+                          addMarker2(event.latLng);
                       } else {
                         swal("Cancelled");
                       }
@@ -388,6 +361,7 @@
         var mapradius = radiusSize*.0000100;
         var xcor;
         var ycor;
+        
         for (ctr=0;ctr<360;){
             xcor = location.lat() + (mapradius*Math.cos(ctr));
             ycor = location.lng() + (mapradius*Math.sin(ctr));
@@ -426,6 +400,7 @@
             url: "server_plottingMockAjax.php",
             data: {
                 markers: markerSaving
+                +
             },
             success: function(msg){ 
               if(msg == "Data have been saved"){
@@ -441,32 +416,32 @@
         }
     }
 
-    // function displayRoute(origin, destination, service, display) {
-    //     service.route({
-    //       origin: origin,
-    //       destination: destination,
-    //       travelMode: 'WALKING',
-    //       avoidTolls: true,
-    //       optimizeWaypoints: true,
-    //       provideRouteAlternatives: true,
-    //     }, function(response, status) {
-    //       if(status === 'OK') {
-    //         display.setDirections(response);
-    //       } else {
-    //         alert('Could not display directions due to: ' + status);
-    //       }
-    //     });
-    // }
+    function displayRoute(origin, destination, service, display) {
+        service.route({
+          origin: origin,
+          destination: destination,
+          travelMode: 'WALKING',
+          avoidTolls: true,
+          optimizeWaypoints: true,
+          provideRouteAlternatives: true,
+        }, function(response, status) {
+          if(status === 'OK') {
+            display.setDirections(response);
+          } else {
+            alert('Could not display directions due to: ' + status);
+          }
+        });
+    }
 
-    // function computeTotalDistance(result) {
-    //     var total = 0;
-    //     var myroute = result.routes[0];
-    //     for (var i = 0; i < myroute.legs.length; i++) {
-    //       total += myroute.legs[i].distance.value;
-    //     }
-    //     total = total / 1000;
-    //     alert(total + 'km');
-    //   }
+    function computeTotalDistance(result) {
+        var total = 0;
+        var myroute = result.routes[0];
+        for (var i = 0; i < myroute.legs.length; i++) {
+          total += myroute.legs[i].distance.value;
+        }
+        total = total / 1000;
+        alert(total + 'km');
+      }
     </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjWM8z2Q0G7IzoMoD75WCGTRTTNlYiCGI&libraries=geometry&callback=initMap">

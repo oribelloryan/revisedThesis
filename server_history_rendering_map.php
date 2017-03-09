@@ -21,7 +21,7 @@
     <link href="dist/css/starter-template.css" rel="stylesheet">
     <script src="dist/js/sweetalert-dev.js"></script>
     <link rel="stylesheet" href="dist/css/sweetalert.css">
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="jquery_latest.min.js"></script>
     
     <style>
     #map{
@@ -60,7 +60,7 @@
     <p style="color:#bd593d;font-weight:bold;text-transform:uppercase;margin-bottom:5px;">Checkpoint Composition and Location </p>
     <?php
       $id = $_GET['operation_id'];
-      $sql = "SELECT * FROM tbl_operations AS t JOIN criminal_profiling AS cp ON t.operation_id = cp.operation_id JOIN checkpoints AS c ON t.operation_id = c.operation_id JOIN checkpoint_composition AS cc ON c.id = cc.checkpoint_id WHERE t.operation_id = $id";
+      $sql = "SELECT * FROM tbl_operations AS t JOIN criminal_profiling AS cp ON t.operation_id = cp.operation_id JOIN checkpoints AS c ON t.operation_id = c.operation_id JOIN checkpoint_composition AS cc ON c.id = cc.checkpoint_id JOIN police_profiling AS pp ON pp.id = cc.police_id WHERE t.operation_id = $id";
       $result = $conn->query($sql);
       // $row = $result->fetch(PDO::FETCH_ASSOC);
       echo "<table id='tableId'>";
@@ -93,17 +93,17 @@
       }else{
          $past = $data[$i - 1]['location'];
       }
-     
+      $name = $data[$i]['position']." ".$data[$i]['last_name'].", ".$data[$i]['first_name']." ". substr($data[$i]['middle_name'], 0,1).'.';
       echo "<tr>";
       if($data[$i]['location'] == $past && $i > 0){
       echo "<td></td>";
-      echo "<td>".$data[$i]['title']." ".$data[$i]['name']."</td>";
+      echo "<td>".$name."</td>";
       echo "<td>".$data[$i]['designation']."</td>";
       echo "<td></td>";
       echo "<td></td>";
       }else if($data[$i]['location'] != $past || $i == 0){
       echo "<td>".$data[$i]['location']."</td>";
-      echo "<td>".$data[$i]['title']." ".$data[$i]['name']."</td>";
+      echo "<td>".$name."</td>";
       echo "<td>".$data[$i]['designation']."</td>";
       echo "<td>".$data[$i]['contact']."</td>";
       echo "<td>".$data[$i]['marked_vehicle']."</td>";

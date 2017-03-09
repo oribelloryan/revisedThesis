@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 	$parnode = $dom->appendChild($node);
 
 	// Search the rows in the markers table
-	$query = "SELECT c.name  AS name, c.id AS id, c.lat AS lat, c.lng AS lng, cc.image AS image FROM checkpoints AS c LEFT JOIN checkpoint_composition AS cc ON c.id = cc.checkpoint_id where cc.designation LIKE 'team leader' AND c.operation_id = $id";
+	$query = "SELECT c.name AS name, c.id AS id, c.lat AS lat, c.lng AS lng, pp.image AS image FROM checkpoints AS c LEFT JOIN checkpoint_composition AS cc ON c.id = cc.checkpoint_id JOIN police_profiling AS pp ON cc.police_id = pp.id where cc.designation LIKE 'team leader' AND c.operation_id = $id";
 	$result = $conn->query($query);
 
 	header("Content-type: text/xml");

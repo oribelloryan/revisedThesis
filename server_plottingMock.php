@@ -361,16 +361,20 @@
         var mapradius = radiusSize*.0000100;
         var xcor;
         var ycor;
+        var counter = 20;
         for (ctr=0;ctr<360;){
-            xcor = location.lat() + (mapradius*Math.cos(ctr));
-            ycor = location.lng() + (mapradius*Math.sin(ctr));
-            var newlocation = { latlng: new google.maps.LatLng(xcor, ycor) };
-            var newLocation = new google.maps.LatLng(xcor, ycor);
-            var check = { latlng:new google.maps.LatLng(xcor, ycor) };
-            addMarker( newLocation );
-            point1.push( newlocation );
-            ctr = ctr + 3;
+            if(counter == 20){
+              xcor = location.lat() + (mapradius*Math.cos(ctr));
+              ycor = location.lng() + (mapradius*Math.sin(ctr));
+              var newlocation = { latlng: new google.maps.LatLng(xcor, ycor) };
+              var newLocation = new google.maps.LatLng(xcor, ycor);
+              var check = { latlng:new google.maps.LatLng(xcor, ycor) };
+              addMarker( newLocation );
+              point1.push( newlocation );
+              ctr = ctr + 20;
+            }
         }
+
         var i;
         var marker;
         for (i=0;i<point1.length;i++){

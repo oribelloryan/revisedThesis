@@ -37,7 +37,7 @@
         height: 570px;
         visibility:hidden;
       }
-      #saveBtn, #address, #checkpointSpan, #changeTargetBtn, #targetSpan{
+      #saveBtn, #address, #checkpointSpan, #changeTargetBtn, #targetSpan, #autoBtn{
         visibility:hidden;
       }.modal {
     display: none;
@@ -78,6 +78,7 @@
     <input type="number" class="form-control" id="radiussize" style="width:10%;">
     <button onClick="changeradius('changeRadius')" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:100px;"><span id="set">SET RADIUS SIZE(m)</span></button>
     <button onClick="changeTarget('changeTarget')" id="changeTargetBtn" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">CHANGE TARGET</button>
+     <button id="autoBtn" onClick="autoDeploymentFn()" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">AUTO DEPLOYMENT</button>
     <button id="saveBtn" onClick="saving()" class="btn btn-default" style="background-color:#2b3f6d;color:#ffffff;width:20%;margin-top:-70px;margin-left:10px;">SAVE MAP</button>
     <br/>
     <!--<span id = "address"><span>Target Address: </span> <span id= "targetAddress">None</span> </span>-->
@@ -98,10 +99,10 @@
     var markers = [];
     var locations = [];
     var poly;
-    var circle;
+    var circle, circleCenter;
     var perimeterOpen = false;
     var isOfCity;
-    var index = 0;
+    var index = 0, autoCounter = 0;
     var pastRadiusSize;
     var save = document.getElementById('saveBtn');
 
@@ -142,6 +143,38 @@
          }
     }
 
+    function autoDeploymentFn(){
+      if(autoCounter == 0){
+         swal({
+             title: "Are you sure to deploy automatic checkpoint?",
+             text: "Automatic Deployment",
+             type: "",
+             showCancelButton: true,
+             confirmButtonColor: '#DD6B55',
+             confirmButtonText: "confirm",
+             cancelButtonText: "Cancel",
+             closeOnConfirm: false,
+             closeOnCancel: true
+            },
+          function(isConfirm){
+            if(isConfirm){
+            
+             var center = circleCenter;
+             var p=360/20, d=0;
+                  for(var i=0; i<20; ++i, d+=p){
+                      var autoPoint = google.maps.geometry.spherical.computeOffset(center,radiusSize,d);
+                      snapToRoad(autoPoint, 'auto');
+                  }
+              swal("",'Auto Checkpoints Deployed', "success"); 
+              }
+              autoCounter++;
+            });
+      }else{
+         swal("Auto has been deployed");
+      }
+          
+    }
+
     function changeTarget(source){
       var title, text, confirm, swalTitle, swalText;
       if(source === 'changeRadius'){
@@ -173,6 +206,7 @@
         if(isConfirm){
         removeEverything();
         swal(swalTitle, swalText, "success");
+
     }
     });
   }
@@ -181,13 +215,15 @@
         circle.setMap(null);
         markers = [];
         perimeterOpen = false;
-        
+        autoCounter = 0;
+
         document.getElementById("targetSpan").style.visibility = 'hidden';
         document.getElementById("checkpointSpan").style.visibility = 'hidden';
         document.getElementById("changeTargetBtn").style.visibility = 'hidden';
         document.getElementById("targetLabel").style.visibility = 'hidden';
         document.getElementById("checkpointsCounter").style.visibility = 'hidden';
         document.getElementById("saveBtn").style.visibility = 'hidden';
+        document.getElementById("autoBtn").style.visibility = 'hidden';
     }
 
      function setMapOnAll(map){
@@ -197,7 +233,7 @@
         }
       }
 
-    function snapToRoad(data){
+    function snapToRoad(data, src){
       var latitude, longitude;
       var dot = locationPass(data);
       
@@ -257,7 +293,11 @@
           save.style.visibility = 'visible';
            });
           }else{
-            swal('Sorry', 'The targeted road is not within the perimeter', 'warning');
+            if(src == 'auto'){
+
+            }else{
+              swal('Sorry', 'The targeted road is not within the perimeter', 'warning');
+            }
           }
          },
          complete: function(){
@@ -299,6 +339,9 @@
         markers[i].setMap(null);
         markers.splice(i,1);
         checkpointsCounterFn();
+        }
+        if(markers.length == 1){
+          save.style.visibility = 'hidden';
         }
       }
       swal("Checkpoint Deleted","","success");
@@ -518,6 +561,7 @@
                         document.getElementById('targetLabel').innerHTML = back;
                         checkpointSpanVisibility(true);
                         swal("Area Locked", "Targeted Place", "success");
+                        circleCenter = event.latLng;
                         addPerimeter(event.latLng, back);
                         perimeterOpen = setPerimeter();
                         if(radiusSize <= 400){
@@ -528,6 +572,7 @@
                         map.setZoom(16);
                         }
                         changeTargetBtn.style.visibility = "visible";
+                        document.getElementById('autoBtn').style.visibility = "visible";
                         document.getElementById('targetSpan').style.visibility = "visible";
                       } else {
                         swal("Cancelled");
